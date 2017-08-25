@@ -240,214 +240,215 @@ void Stage::update_self(unsigned long) {
   }
 }
 
-void
-Stage::draw_self()
-{
-    Environment *env = Environment::get_instance();
-    env->canvas->clear(Color::BLUE);
+void Stage::draw_self() {
+  Environment *env;
+
+  env = Environment::get_instance();
+  env->canvas->clear(Color::BLUE);
 }
 
-bool
-Stage::on_message(Object *, MessageID id, Parameters p)
-{
-    if (id == Player::hitExitDoorID)
-    {
+bool Stage::on_message(Object *, MessageID id, Parameters p) {
+  if (id == Player::hitExitDoorID) {
+    *m_sanity = m_player->sanity();
+    set_next(p);
+    finish();
+    return true;
+  }
+
+  if (id == Player::changeRoomID) {
+    if (p == "left") {
+      m_map->set_current(m_map->current_room->r_left);
+    }
+    else if (p == "top") {
+      m_map->set_current(m_map->current_room->r_top);
+    }
+    else if (p == "right") {
+      m_map->set_current(m_map->current_room->r_right);
+    }
+    else if (p == "bottom") {
+      m_map->set_current(m_map->current_room->r_bottom);
+    }
+
+  return true;
+  }
+  else if (id == Player::jumpNextLevelID) {
+    char new_stage[256];
+    sprintf(new_stage, "trans%d", m_num_id+1);
+
+    m_player->set_key(false);
+    m_player->notify(Player::hitExitDoorID, new_stage);
+
+    return true;
+  }
+  else if (id == Player::repeatLevelID) {
+    m_player->set_key(false);
+
+    cout << "Voce morreu, parca. Re";
+    m_player->die();
+
+    char new_stage[256];
+
+    if (m_player->life() > 0) {
+        sprintf(new_stage, "death%d", m_num_id);
+
+        m_player->set_sanity(m_player->sanity()-20);
+
         *m_sanity = m_player->sanity();
-        set_next(p);
-        finish();
-        return true;
     }
-    if (id == Player::changeRoomID)
-    {
-        if(p == "left")
-            m_map->set_current(m_map->current_room->r_left);
-        else if(p == "top")
-            m_map->set_current(m_map->current_room->r_top);
-        else if(p == "right")
-            m_map->set_current(m_map->current_room->r_right);
-        else if(p == "bottom")
-            m_map->set_current(m_map->current_room->r_bottom);
-
-        return true;
+    else {
+      sprintf(new_stage, "gameover");
     }
-    else if(id == Player::jumpNextLevelID)
-    {
-        m_player->set_key(false);
-        char new_stage[256];
-        sprintf(new_stage, "trans%d", m_num_id+1);
-        m_player->notify(Player::hitExitDoorID, new_stage);
-        return true;
-    }
-    else if(id == Player::repeatLevelID)
-    {
-        m_player->set_key(false);
-        char new_stage[256];
-        cout << "Voce morreu, parca. Re";
-        m_player->die();
-        if(m_player->life() > 0)
-        {
-            sprintf(new_stage, "death%d", m_num_id);
-            m_player->set_sanity(m_player->sanity()-20);
-            *m_sanity = m_player->sanity();
-        }
-        else
-            sprintf(new_stage, "gameover");
-        m_player->notify(Player::hitExitDoorID, new_stage);
-        return true;
-    }
-    else if(id == Player::takeItemID)
-    {
-        const list<Object *> items = m_map->items();
-        for (auto item : items)
-        {
-            Rect a = m_player->bounding_box();
-            Rect b = item->bounding_box();
-            Rect c = a.intersection(b);
 
-            // Treats direct colisions
-            if(item->walkable() == true)
-            {
-                if (c.w() != 0 and c.h() != 0)
-                {
-                    if(strstr(item->id().c_str(), "key"))
-                    {
-                        cout << "Pegou a chave!" << endl;
-                        m_map->remove_item(item);
-                        m_player->get_key();
+    m_player->notify(Player::hitExitDoorID, new_stage);
 
-                        if(m_num_id >= 5)
-                        {
-                            m_map->m_boss->set_position(m_player->x(), m_player->y());
-                            notify(Stage::summonBossID, "stage7");
-                        }
+    return true;
+  }
+  else if (id == Player::takeItemID) {
+    const list<Object *> items = m_map->items();
 
-                        return true;
-                    }
+    for (auto item : items) {
+      Rect a = m_player->bounding_box();
+      Rect b = item->bounding_box();
+      Rect c = a.intersection(b);
 
-                    if(strstr(item->id().c_str(), "Pill"))
-                    {
-                        m_player->get_pill(item->id());
-                        m_map->remove_item(item);
-                    }
+      // Treats direct colisions
+      if(item->walkable() == true) {
+        if (c.w() != 0 and c.h() != 0) {
+          if (strstr(item->id().c_str(), "key")) {
+            cout << "Pegou a chave!" << endl;
 
-                    if(item->id() == "Garrafa" || item->id() == "Faca" || item->id() == "Cacetete")
-                    {
-                        m_player->get_weapon(item->id());
-                        m_map->remove_item(item);
-                    }
-                }
+            m_map->remove_item(item);
+            m_player->get_key();
+
+            if (m_num_id >= 5) {
+              m_map->m_boss->set_position(m_player->x(), m_player->y());
+
+              notify(Stage::summonBossID, "stage7");
             }
-        }
-    }
-    else if(id == Player::openDoorID)
-    {
-        const list<Object *> items = m_map->items();
-        for (auto item : items)
-        {
-            Rect a = m_player->bounding_box();
-            Rect b = item->bounding_box();
-            Rect c = a.intersection(b);
+            return true;
+          }
 
-            if(item->walkable() == true)
-            {
-                if(item->id() == "finalDoor")
-                {
-                    if (c.w() > 0 and c.h() > 0)
-                    {
-                        if(m_player->has_key() == true)
-                        {
-                            m_player->set_key(false);
-                            finish();
-                            char new_stage[256];
-                            sprintf(new_stage, "trans%d", m_num_id+1);
-                            m_player->notify(Player::hitExitDoorID, new_stage);
-                            return true;
-                        }
-                    }
-                }
+          if (strstr(item->id().c_str(), "Pill")) {
+            m_player->get_pill(item->id());
+            m_map->remove_item(item);
+          }
+
+          if (item->id() == "Garrafa" || item->id() == "Faca" || item->id() == "Cacetete") {
+            m_player->get_weapon(item->id());
+            m_map->remove_item(item);
+          }
+        }
+      }
+    }
+  }
+  else if (id == Player::openDoorID) {
+    const list<Object *> items = m_map->items();
+
+    for (auto item : items) {
+      Rect a = m_player->bounding_box();
+      Rect b = item->bounding_box();
+      Rect c = a.intersection(b);
+
+      if (item->walkable() == true) {
+        if (item->id() == "finalDoor") {
+          if (c.w() > 0 and c.h() > 0) {
+            if (m_player->has_key() == true) {
+
+              m_player->set_key(false);
+
+              finish();
+
+              char new_stage[256];
+              sprintf(new_stage, "trans%d", m_num_id+1);
+              m_player->notify(Player::hitExitDoorID, new_stage);
+
+              return true;
             }
+          }
         }
+      }
     }
-    else if(id == Player::pushItemID)
-    {
-        const list<Object *> items = m_map->items();
-        for (auto item : items)
-        {
-            Rect a = m_player->bounding_box();
-            Rect b = item->bounding_box();
-            Rect c = a.intersection(b);
+  }
+  else if(id == Player::pushItemID)
+  {
+      const list<Object *> items = m_map->items();
+      for (auto item : items)
+      {
+          Rect a = m_player->bounding_box();
+          Rect b = item->bounding_box();
+          Rect c = a.intersection(b);
 
-            if(item->walkable() == false)
-            {
-                if (c.w() != 0 and c.h() != 0)
-                {
-                    if(item->mass() <= m_player->strength())
-                    {
-                        if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
-                        {
-                            if(a.x() < b.x())
-                            {
-                                item->set_x(b.x() + 1);
-                                //m_player->set_x(b.x() - a.w());
-                            }
-                            else if(a.x() > b.x())
-                            {
-                                item->set_x(b.x() - 1);
-                                //m_player->set_x(b.x() + b.w());
-                            }
-                        }
-                        else
-                        {
-                            if(a.y() < b.y())
-                            {
-                                item->set_y(b.y() + 1);
-                                //m_player->set_y(b.y() - a.h());
-                            }
-                            else if(a.y() > b.y())
-                            {
-                                item->set_y(b.y() - 1);
-                                //m_player->set_y(b.y() + b.h());
-                            }
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    else if(id == Player::getHitID)
-    {
-        const list<Object *> npcs = m_map->current_room->children();
-        const list<Object *> filhos = m_player->children();
-        for (auto npc : npcs)
-        {
-            for (auto filho : filhos)
-            {
-                Rect a = filho->bounding_box();
-                Rect b = npc->bounding_box();
-                Rect c = a.intersection(b);
+          if(item->walkable() == false)
+          {
+              if (c.w() != 0 and c.h() != 0)
+              {
+                  if(item->mass() <= m_player->strength())
+                  {
+                      if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
+                      {
+                          if(a.x() < b.x())
+                          {
+                              item->set_x(b.x() + 1);
+                              //m_player->set_x(b.x() - a.w());
+                          }
+                          else if(a.x() > b.x())
+                          {
+                              item->set_x(b.x() - 1);
+                              //m_player->set_x(b.x() + b.w());
+                          }
+                      }
+                      else
+                      {
+                          if(a.y() < b.y())
+                          {
+                              item->set_y(b.y() + 1);
+                              //m_player->set_y(b.y() - a.h());
+                          }
+                          else if(a.y() > b.y())
+                          {
+                              item->set_y(b.y() - 1);
+                              //m_player->set_y(b.y() + b.h());
+                          }
+                      }
+                      return true;
+                  }
+              }
+          }
+      }
+  }
+  else if(id == Player::getHitID)
+  {
+      const list<Object *> npcs = m_map->current_room->children();
+      const list<Object *> filhos = m_player->children();
+      for (auto npc : npcs)
+      {
+          for (auto filho : filhos)
+          {
+              Rect a = filho->bounding_box();
+              Rect b = npc->bounding_box();
+              Rect c = a.intersection(b);
 
-                if(npc->id() == "guard")
-                {
-                    if (c.w() != 0 and c.h() != 0)
-                    {
-                        if(filho->id() == "visao")
-                        {
-                            double dmg = atof(p.c_str());
-                            Guard * guarda = (Guard*) npc;
-                            guarda->receive_dmg(dmg);
-                            return true;
-                        }
+              if(npc->id() == "guard")
+              {
+                  if (c.w() != 0 and c.h() != 0)
+                  {
+                      if(filho->id() == "visao")
+                      {
+                          double dmg = atof(p.c_str());
+                          Guard * guarda = (Guard*) npc;
+                          guarda->receive_dmg(dmg);
+                          return true;
+                      }
 
-                    }
-                }
-            }
-        }
-    }
-    else if(id == Room::guardDeathID)
-    {
-        cout << "entrou" << endl;
-        m_player->set_sanity(m_player->sanity() - 30);
-    }
-    return false;
+                  }
+              }
+          }
+      }
+  }
+  else if(id == Room::guardDeathID)
+  {
+      cout << "entrou" << endl;
+      m_player->set_sanity(m_player->sanity() - 30);
+  }
+  return false;
 }

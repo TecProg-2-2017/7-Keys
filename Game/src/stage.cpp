@@ -114,7 +114,7 @@ void Stage::update_self(unsigned long) {
               c.y(), c.w(), c.h());
           notify(Stage::colisionID, message);
 
-          if(a.y() > b.y()) {
+          if (a.y() > b.y()) {
             m_player->set_y(b.y() + b.h() - 50);
           }
         }
@@ -216,7 +216,7 @@ void Stage::update_self(unsigned long) {
         guarda->get_playery(m_player->y());
       }
     }
-    else if(item->id() == "ghost") {
+    else if (item->id() == "ghost") {
       Ghost *ghost = (Ghost*) item;
 
       ghost->get_playerx(m_player->x());
@@ -312,7 +312,7 @@ bool Stage::on_message(Object *, MessageID id, Parameters p) {
       Rect c = a.intersection(b);
 
       // Treats direct colisions
-      if(item->walkable() == true) {
+      if (item->walkable() == true) {
         if (c.w() != 0 and c.h() != 0) {
           if (strstr(item->id().c_str(), "key")) {
             cout << "Pegou a chave!" << endl;
@@ -369,86 +369,74 @@ bool Stage::on_message(Object *, MessageID id, Parameters p) {
       }
     }
   }
-  else if(id == Player::pushItemID)
-  {
-      const list<Object *> items = m_map->items();
-      for (auto item : items)
-      {
-          Rect a = m_player->bounding_box();
-          Rect b = item->bounding_box();
-          Rect c = a.intersection(b);
+  else if (id == Player::pushItemID) {
+    const list<Object *> items = m_map->items();
 
-          if(item->walkable() == false)
-          {
-              if (c.w() != 0 and c.h() != 0)
-              {
-                  if(item->mass() <= m_player->strength())
-                  {
-                      if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
-                      {
-                          if(a.x() < b.x())
-                          {
-                              item->set_x(b.x() + 1);
-                              //m_player->set_x(b.x() - a.w());
-                          }
-                          else if(a.x() > b.x())
-                          {
-                              item->set_x(b.x() - 1);
-                              //m_player->set_x(b.x() + b.w());
-                          }
-                      }
-                      else
-                      {
-                          if(a.y() < b.y())
-                          {
-                              item->set_y(b.y() + 1);
-                              //m_player->set_y(b.y() - a.h());
-                          }
-                          else if(a.y() > b.y())
-                          {
-                              item->set_y(b.y() - 1);
-                              //m_player->set_y(b.y() + b.h());
-                          }
-                      }
-                      return true;
-                  }
+    for (auto item : items) {
+      Rect a = m_player->bounding_box();
+      Rect b = item->bounding_box();
+      Rect c = a.intersection(b);
+
+      if (item->walkable() == false) {
+        if (c.w() != 0 and c.h() != 0) {
+          if (item->mass() <= m_player->strength()) {
+            if (abs(a.x() - b.x()) > abs(a.y() - b.y())) {
+              if (a.x() < b.x()) {
+                item->set_x(b.x() + 1);
+                // m_player->set_x(b.x() - a.w());
               }
-          }
-      }
-  }
-  else if(id == Player::getHitID)
-  {
-      const list<Object *> npcs = m_map->current_room->children();
-      const list<Object *> filhos = m_player->children();
-      for (auto npc : npcs)
-      {
-          for (auto filho : filhos)
-          {
-              Rect a = filho->bounding_box();
-              Rect b = npc->bounding_box();
-              Rect c = a.intersection(b);
-
-              if(npc->id() == "guard")
-              {
-                  if (c.w() != 0 and c.h() != 0)
-                  {
-                      if(filho->id() == "visao")
-                      {
-                          double dmg = atof(p.c_str());
-                          Guard * guarda = (Guard*) npc;
-                          guarda->receive_dmg(dmg);
-                          return true;
-                      }
-
-                  }
+              else if (a.x() > b.x()) {
+                item->set_x(b.x() - 1);
+                // m_player->set_x(b.x() + b.w());
               }
+            }
+            else {
+              if (a.y() < b.y()) {
+                item->set_y(b.y() + 1);
+                // m_player->set_y(b.y() - a.h());
+              }
+              else if (a.y() > b.y()) {
+                item->set_y(b.y() - 1);
+                // m_player->set_y(b.y() + b.h());
+              }
+            }
+
+            return true;
           }
+        }
       }
+    }
   }
-  else if(id == Room::guardDeathID)
-  {
-      cout << "entrou" << endl;
-      m_player->set_sanity(m_player->sanity() - 30);
+  else if (id == Player::getHitID) {
+    const list<Object *> npcs = m_map->current_room->children();
+    const list<Object *> filhos = m_player->children();
+
+    for (auto npc : npcs) {
+
+      for (auto filho : filhos) {
+        Rect a = filho->bounding_box();
+        Rect b = npc->bounding_box();
+        Rect c = a.intersection(b);
+
+        if (npc->id() == "guard") {
+          if (c.w() != 0 and c.h() != 0) {
+            if (filho->id() == "visao") {
+              double dmg = atof(p.c_str());
+
+              Guard * guarda = (Guard*) npc;
+              guarda->receive_dmg(dmg);
+
+              return true;
+            }
+          }
+        }
+      }
+    }
   }
+  else if (id == Room::guardDeathID) {
+    cout << "entrou" << endl;
+    m_player->set_sanity(m_player->sanity() - 30);
+  }
+
   return false;
 }

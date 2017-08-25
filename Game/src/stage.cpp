@@ -1,11 +1,12 @@
 /*
- * Autor: Edson Alves
- * Data: 20/04/2015
- * Licença: LGPL. Sem copyright.
- */
+* Author: Edson Alves
+* Date: 20/04/2015
+* Licence: LGPL. No copyright
+*/
+
 #include <core/environment.h>
 #include <core/music.h>
-#include <core/soundeffect.h> 
+#include <core/soundeffect.h>
 #include <core/audiomanager.h>
 #include <core/audiomanagerwrapper.h>
 
@@ -22,259 +23,228 @@ ActionID Stage::colisionID = "colisionID()";
 ActionID Stage::summonBossID = "summonBossID()";
 
 Stage::Stage(ObjectID id, int lives, double * sanity)
-    : Level(id)
-{
-    char aux[10];
-    char temp[10];
-    sprintf(temp, "%s", id.c_str());
-    for(int i = 0; temp[i] != '\0'; i++)
-    {
-        aux[i] = temp[i+5];
-    }
-    m_sanity = sanity;
+  : Level(id) {
 
-    m_num_id = atoi(aux);
-    int quantidade_de_salas = (3 + m_num_id + (m_num_id - 1) * 2) *(1 + (1 - *m_sanity/100)*0.55);
+  char aux[10];
+  char temp[10];
 
-    cout << "Iniciado Stage "<< m_num_id << ", " << quantidade_de_salas << " salas criadas." << endl;
+  sprintf(temp, "%s", id.c_str());
 
-    m_map = new Map(quantidade_de_salas,m_num_id);
-    add_child(m_map);
-    m_map->add_observer(this);
+  for (int i = 0; temp[i] != '\0'; i++) {
+    aux[i] = temp[i+5];
+  }
 
-    double health = 100.0;
+  m_sanity = sanity;
 
-    m_player = new Player(this, "player");
-    m_player->set_strength(100.0);
-    m_player->set_health(health);
-    m_player->set_life(lives);
-    m_player->set_sanity(*sanity);
+  m_num_id = atoi(aux);
 
-    m_player->add_observer(this);
-    m_player->set_key(false);
-    m_player->set_position(600, 320);
+  int quantidade_de_salas = (3 + m_num_id + (m_num_id - 1) * 2) * (1 + (1 - *m_sanity/100) * 0.55);
 
-    if(m_num_id == 1)
-    {
-        Environment *env = Environment::get_instance();
-        env->sfx->play("res/sounds/Alarme1.wav",1);
-    }
-    
-    
+  cout << "Iniciado Stage "<< m_num_id << ", " << quantidade_de_salas << " salas criadas." << endl;
 
-    add_child(m_player);
+  m_map = new Map(quantidade_de_salas,m_num_id);
 
-    // Environment *env = Environment::get_instance();
-    // char music_path[256];
-    // if(m_num_id < 5)
-    //     sprintf(music_path, "res/sounds/Fase%d.wav", m_num_id);
-    // else
-    //     sprintf(music_path, "res/sounds/Fase5.wav");
-    // env->music->play(music_path, -1);
+  add_child(m_map);
 
-    add_observer(m_player);
-    add_observer(m_map);
+  m_map->add_observer(this);
+
+  double health = 100.0;
+
+  m_player = new Player(this, "player");
+  m_player->set_strength(100.0);
+  m_player->set_health(health);
+  m_player->set_life(lives);
+  m_player->set_sanity(*sanity);
+
+  m_player->add_observer(this);
+  m_player->set_key(false);
+  m_player->set_position(600, 320);
+
+  if (m_num_id == 1) {
+    Environment *env = Environment::get_instance();
+    env->sfx->play("res/sounds/Alarme1.wav",1);
+  }
+
+  add_child(m_player);
+  add_observer(m_player);
+  add_observer(m_map);
 }
 
-void
-Stage::update_self(unsigned long)
-{
+void Stage::update_self(unsigned long) {
+  const list<Object*> map_filhos = m_map->children();
 
-    const list<Object*> map_filhos = m_map->children();
-    for( auto filho : map_filhos)
-    {
-        Rect a = m_player->bounding_box();
-        Rect b = filho->bounding_box();
-        Rect c = a.intersection(b);
+  for (auto filho : map_filhos) {
+    Rect a = m_player->bounding_box();
+    Rect b = filho->bounding_box();
+    Rect c = a.intersection(b);
 
-        if(filho->id() == "boss")
-        {
-            Boss *boss = (Boss*) filho;
-            boss->get_playerx(m_player->x());
-            boss->get_playery(m_player->y());
+    if (filho->id() == "boss") {
+      Boss *boss = (Boss*) filho;
+      boss->get_playerx(m_player->x());
+      boss->get_playery(m_player->y());
 
-            //retirar vida do player
-            if (c.w() != 0 and c.h() != 0)
-            {
-                if(m_player->health() > 0)
-                {
-                    m_player->set_health(m_player->health() - boss->damage());
-                    if(m_player->health() < 0)
-                        m_player->set_health(0);
-                }    
-            }
+      // Removes player's hp
+      if (c.w() != 0 and c.h() != 0) {
+
+        if (m_player->health() > 0) {
+          m_player->set_health(m_player->health() - boss->damage());
+
+          if (m_player->health() < 0) {
+            m_player->set_health(0);
+          }
         }
+      }
+    }
+  }
+
+  const list<Object *> items = m_map->items();
+
+  for (auto item : items) {
+    Rect a = m_player->bounding_box();
+    Rect b = item->bounding_box();
+    Rect c = a.intersection(b);
+
+    // Treats direct collisions
+    if (item->walkable() == false) {
+      if (item->id() == "paredet") {
+        if (c.w() != 0 and c.h() > 50) {
+          char message[512];
+
+          sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
+              c.y(), c.w(), c.h());
+          notify(Stage::colisionID, message);
+
+          if(a.y() > b.y()) {
+            m_player->set_y(b.y() + b.h() - 50);
+          }
+        }
+      }
+      else if (c.w() != 0 and c.h() != 0) {
+        char message[512];
+
+        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
+            c.y(), c.w(), c.h());
+        notify(Stage::colisionID, message);
+
+        // Axis x
+        if (abs(a.x() - b.x()) > abs(a.y() - b.y())) {
+          if (a.x() < b.x()) {
+            m_player->set_x(b.x() - a.w() + 1);
+          }
+          else if (a.x() > b.x()) {
+            m_player->set_x(b.x() + b.w() - 1);
+          }
+        }
+        else {
+          if (a.y() < b.y()) {
+            m_player->set_y(b.y() - a.h() + 1);
+          }
+          else if (a.y() > b.y()) {
+            m_player->set_y(b.y() + b.h() - 1);
+          }
+        }
+      }
+    }
+    else {
+      if (c.w() != 0 and c.h() != 0) {
+        char message[512];
+
+        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
+            c.y(), c.w(), c.h());
+
+        notify(Stage::colisionID, message);
+      }
+
+      if (c.w() > 50 and c.h() > 50) {
+        if (item->id() == "door") {
+          if (item->x() == 0 && item->y() == 320) {  // m_map->current_room->r_left
+            m_player->set_current("left", 1120, m_player->y());
+            m_map->m_boss->set_position(1120, m_player->y());
+          }
+          else if (item->x() == 1200 && item->y() == 320) {
+            m_player->set_current("right", 80, m_player->y());
+            m_map->m_boss->set_position(80, m_player->y());
+          }
+          else if (item->x() == 600 && item->y() == 0) {
+            m_player->set_current("top", m_player->x(), 560);
+            m_map->m_boss->set_position(m_player->x(), 560);
+          }
+          else if (item->x() == 600 && item->y() == 640) {
+            m_player->set_current("bottom", m_player->x(), 80);
+            m_map->m_boss->set_position(m_player->x(), 80);
+          }
+        }
+      }
     }
 
+    // Treats guards line of sight
+    if (item->id() == "guard") {
+      Guard *guarda = (Guard*) item;
 
-    const list<Object *> items = m_map->items();
-    for (auto item : items)
-    {
-        Rect a = m_player->bounding_box();
-        Rect b = item->bounding_box();
-        Rect c = a.intersection(b);
+      const list<Object *> filhos = item->children();
 
-        //tratando colisoes diretas
-        if(item->walkable() == false)
-        {
-            if(item->id() == "paredet")
-            {
-                if (c.w() != 0 and c.h() > 50)
-                {
-                    char message[512];
-                    sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-                        c.y(), c.w(), c.h());
-                    notify(Stage::colisionID, message);
+      Environment *env = Environment::get_instance();
 
-                    if(a.y() > b.y())
-                    {
-                        m_player->set_y(b.y() + b.h() - 50);
-                    }
-                }
+      for (auto filho : filhos) {
+        Rect a2 = m_player->bounding_box();
+        Rect b2 = filho->bounding_box();
+        Rect c2 = a2.intersection(b2);
+
+        if (c2.w() != 0 and c2.h() != 0) {
+          if (filho->id() == "visao") {
+            if (guarda->type() != "follow") {
+                env->sfx->play("res/sounds/alemaogritando.wav",1);
+                guarda->m_old_type = guarda->type();
+                guarda->set_type("follow");
             }
-            else if (c.w() != 0 and c.h() != 0)
-            {
-                char message[512];
-                sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-                    c.y(), c.w(), c.h());
-                notify(Stage::colisionID, message);
 
-                //eixo x
-                if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
-                {
-                    if(a.x() < b.x())
-                    {
-                        m_player->set_x(b.x() - a.w() + 1);
-                    }
-                    else if(a.x() > b.x())
-                    {
-                        m_player->set_x(b.x() + b.w() - 1);
-                    }
+            if ((c2.w() != 0 and c2.h() != 0) && (c.w() != 0 and c.h() != 0)) {
+              if (m_player->health() > 0) {
+                m_player->set_health(m_player->health() - guarda->damage());
+
+                if (m_player->health() < 0) {
+                  m_player->set_health(0);
                 }
-                else
-                {
-                    if(a.y() < b.y())
-                    {
-                        m_player->set_y(b.y() - a.h() + 1);
-                    }
-                    else if(a.y() > b.y())
-                    {
-                        m_player->set_y(b.y() + b.h() - 1);
-                    }
-                }
+              }
             }
+          }
         }
-        else
-        {
+      }
 
-            if (c.w() != 0 and c.h() != 0)
-            {
-                char message[512];
-                sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-                    c.y(), c.w(), c.h());
-
-                notify(Stage::colisionID, message);
-                
-            }
-            if(c.w() > 50 and c.h() > 50)
-            {
-                if(item->id() == "door")
-                {
-                    if(item->x() == 0 && item->y() == 320)//m_map->current_room->r_left
-                    {
-                        m_player->set_current("left", 1120, m_player->y());
-                        m_map->m_boss->set_position(1120, m_player->y());
-                    }
-                    else if(item->x() == 1200 && item->y() == 320)
-                    {
-                        m_player->set_current("right", 80, m_player->y());
-                        m_map->m_boss->set_position(80, m_player->y());
-                    }
-                    else if(item->x() == 600 && item->y() == 0)
-                    {
-                        m_player->set_current("top", m_player->x(), 560);
-                        m_map->m_boss->set_position(m_player->x(), 560);
-                    }
-                    else if(item->x() == 600 && item->y() == 640)
-                    {
-                        m_player->set_current("bottom", m_player->x(), 80);
-                        m_map->m_boss->set_position(m_player->x(), 80);
-                    }
-                }
-
-            }
-        }
-
-        //Tratando visoes dos guardas
-        if(item->id() == "guard")
-        {
-            Guard *guarda = (Guard*) item;
-            const list<Object *> filhos = item->children();
-            Environment *env = Environment::get_instance();
-            for (auto filho : filhos)
-            {
-                Rect a2 = m_player->bounding_box();
-                Rect b2 = filho->bounding_box();
-                Rect c2 = a2.intersection(b2);
-
-                if (c2.w() != 0 and c2.h() != 0)
-                {
-                    if(filho->id() == "visao")
-                    {
-                        if(guarda->type() != "follow")
-                        {
-                            env->sfx->play("res/sounds/alemaogritando.wav",1);
-                            guarda->m_old_type = guarda->type();
-                            guarda->set_type("follow");
-                        }
-                        if ((c2.w() != 0 and c2.h() != 0) && (c.w() != 0 and c.h() != 0))
-                            {
-                                if(m_player->health() > 0)
-                                {
-                                    m_player->set_health(m_player->health() - guarda->damage());
-                                    if(m_player->health() < 0)
-                                        m_player->set_health(0);
-                                }
-                            }
-                    }
-                }
-                
-            }
-
-            if(guarda->type() == "follow")
-            {
-                guarda->get_playerx(m_player->x());
-                guarda->get_playery(m_player->y());
-            }
-        }
-        else if(item->id() == "ghost")
-        {
-            Ghost *ghost = (Ghost*) item;
-            ghost->get_playerx(m_player->x());
-            ghost->get_playery(m_player->y());
-            const list<Object *> filhos = item->children();
-
-            //retirar vida do player
-            if (c.w() != 0 and c.h() != 0)
-            {
-                if(m_player->health() > 0)
-                {
-                    m_player->set_health(m_player->health() - ghost->damage());
-                    if(m_player->health() < 0)
-                        m_player->set_health(0);
-
-                    m_player->set_sanity(m_player->sanity() - ghost->damage()/2);
-                }    
-            }
-        }
+      if (guarda->type() == "follow") {
+        guarda->get_playerx(m_player->x());
+        guarda->get_playery(m_player->y());
+      }
     }
+    else if(item->id() == "ghost") {
+      Ghost *ghost = (Ghost*) item;
+
+      ghost->get_playerx(m_player->x());
+      ghost->get_playery(m_player->y());
+
+      const list<Object *> filhos = item->children();
+
+      // Decreases player's hp
+      if (c.w() != 0 and c.h() != 0) {
+        if (m_player->health() > 0) {
+          m_player->set_health(m_player->health() - ghost->damage());
+
+          if (m_player->health() < 0) {
+            m_player->set_health(0);
+          }
+
+          m_player->set_sanity(m_player->sanity() - ghost->damage()/2);
+        }
+      }
+    }
+  }
 }
 
 void
 Stage::draw_self()
 {
     Environment *env = Environment::get_instance();
-    env->canvas->clear(Color::BLUE);   
+    env->canvas->clear(Color::BLUE);
 }
 
 bool
@@ -334,7 +304,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
             Rect b = item->bounding_box();
             Rect c = a.intersection(b);
 
-            //tratando colisoes diretas
+            // Treats direct colisions
             if(item->walkable() == true)
             {
                 if (c.w() != 0 and c.h() != 0)
@@ -350,7 +320,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             m_map->m_boss->set_position(m_player->x(), m_player->y());
                             notify(Stage::summonBossID, "stage7");
                         }
-                        
+
                         return true;
                     }
 
@@ -424,10 +394,10 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             {
                                 item->set_x(b.x() - 1);
                                 //m_player->set_x(b.x() + b.w());
-                            } 
+                            }
                         }
                         else
-                        {  
+                        {
                             if(a.y() < b.y())
                             {
                                 item->set_y(b.y() + 1);
@@ -468,7 +438,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             guarda->receive_dmg(dmg);
                             return true;
                         }
-                        
+
                     }
                 }
             }

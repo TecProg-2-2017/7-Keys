@@ -1,15 +1,14 @@
 #include "options.h"
- 
 #include <ijengine/util/button.h>
 #include <core/font.h>
 #include <core/environment.h>
 #include <core/mousemotionevent.h>
 #include <iostream>
+
 using namespace std;
 
-Options::Options()
-    : Level("options")
-{
+Options::Options() : Level("options") {
+
     Environment *env = Environment::get_instance();
     double w = env->canvas->w();
     double h = env->canvas->h();
@@ -37,18 +36,12 @@ Options::Options()
     add_child(set_fullscreen);
     add_child(windowmode);
     add_child(back);
-
-
-    
 }
 
-Options::~Options()
-{
+Options::~Options() {
 }
 
-void
-Options::draw_self()
-{
+void Options::draw_self() {
     Environment *env = Environment::get_instance();
     env->canvas->clear(Color::WHITE);
 
@@ -56,39 +49,32 @@ Options::draw_self()
     env->canvas->draw(image.get(), 1, 0);
 }
 
-bool
-Options::on_message(Object *object, MessageID id, Parameters)
-{
+bool Options::on_message(Object *object, MessageID id, Parameters) {
     Environment *env = Environment::get_instance();
     Button *button = dynamic_cast<Button *>(object);
     env->sfx->play("res/sounds/navegacaomenu.wav", 1);
 
-    if (id != Button::clickedID)
-    {   
+    if (id != Button::clickedID) {
         return false;
     }
 
-    if (not button)
-    {
+    if (not button) {
         return false;
     }
-    
+
     if(button->id() == "fullscreen" || button->id() == "windowmode" || button->id() == "back")
             env->sfx->play("res/sounds/navegacaomenu.wav",1);
 
-    if (button->id() == "fullscreen")
-    {   
+    if (button->id() == "fullscreen") {
         env->video->set_fullscreen();
         set_next("options");
-    } 
-    else if (button->id() == "windowmode")
-    {   
+    }
+    else if (button->id() == "windowmode") {
         env->video->set_fullscreen(false);
         set_next("options");
     }
 
-    else if (button->id() == "back")
-    {
+    else if (button->id() == "back") {
         set_next("title");
     }
 

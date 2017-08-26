@@ -5,7 +5,7 @@
  */
 #include <core/environment.h>
 #include <core/music.h>
-#include <core/soundeffect.h> 
+#include <core/soundeffect.h>
 #include <core/audiomanager.h>
 #include <core/audiomanagerwrapper.h>
 
@@ -17,28 +17,27 @@
 #include "map.h"
 #include "player.h"
 
-
 ActionID Stage::colisionID = "colisionID()";
 ActionID Stage::summonBossID = "summonBossID()";
 
-Stage::Stage(ObjectID id, int lives, double * sanity)
-    : Level(id)
-{
+Stage::Stage(ObjectID id, int lives, double * sanity) : Level(id) {
+
     char aux[10];
     char temp[10];
     sprintf(temp, "%s", id.c_str());
-    for(int i = 0; temp[i] != '\0'; i++)
-    {
+
+    for(int i = 0; temp[i] != '\0'; i++) {
         aux[i] = temp[i+5];
     }
+
     m_sanity = sanity;
 
-    m_num_id = atoi(aux);
-    int quantidade_de_salas = (3 + m_num_id + (m_num_id - 1) * 2) *(1 + (1 - *m_sanity/100)*0.55);
+    m_number_id = atoi(aux);
+    int quantidade_de_salas = (3 + m_number_id + (m_number_id - 1) * 2) *(1 + (1 - *m_sanity/100)*0.55);
 
-    cout << "Iniciado Stage "<< m_num_id << ", " << quantidade_de_salas << " salas criadas." << endl;
+    cout << "Iniciado Stage "<< m_number_id << ", " << quantidade_de_salas << " salas criadas." << endl;
 
-    m_map = new Map(quantidade_de_salas,m_num_id);
+    m_map = new Map(quantidade_de_salas,m_number_id);
     add_child(m_map);
     m_map->add_observer(this);
 
@@ -54,13 +53,12 @@ Stage::Stage(ObjectID id, int lives, double * sanity)
     m_player->set_key(false);
     m_player->set_position(600, 320);
 
-    if(m_num_id == 1)
-    {
+    if(m_number_id == 1) {
         Environment *env = Environment::get_instance();
         env->sfx->play("res/sounds/Alarme1.wav",1);
     }
-    
-    
+
+
 
     add_child(m_player);
 
@@ -76,32 +74,31 @@ Stage::Stage(ObjectID id, int lives, double * sanity)
     add_observer(m_map);
 }
 
-void
-Stage::update_self(unsigned long)
-{
+void Stage::update_self(unsigned long) {
 
     const list<Object*> map_filhos = m_map->children();
-    for( auto filho : map_filhos)
-    {
+
+    for( auto filho : map_filhos) {
         Rect a = m_player->bounding_box();
         Rect b = filho->bounding_box();
         Rect c = a.intersection(b);
 
-        if(filho->id() == "boss")
-        {
+        if(filho->id() == "boss") {
             Boss *boss = (Boss*) filho;
             boss->get_playerx(m_player->x());
             boss->get_playery(m_player->y());
 
-            //retirar vida do player
-            if (c.w() != 0 and c.h() != 0)
-            {
-                if(m_player->health() > 0)
-                {
+            // Remove player life
+
+            if (c.w() != 0 and c.h() != 0) {
+
+              if(m_player->health() > 0) {
                     m_player->set_health(m_player->health() - boss->damage());
-                    if(m_player->health() < 0)
+
+                    if(m_player->health() < 0) {
                         m_player->set_health(0);
-                }    
+                      }
+                }
             }
         }
     }
@@ -174,7 +171,7 @@ Stage::update_self(unsigned long)
                     c.y(), c.w(), c.h());
 
                 notify(Stage::colisionID, message);
-                
+
             }
             if(c.w() > 50 and c.h() > 50)
             {
@@ -238,7 +235,7 @@ Stage::update_self(unsigned long)
                             }
                     }
                 }
-                
+
             }
 
             if(guarda->type() == "follow")
@@ -264,7 +261,7 @@ Stage::update_self(unsigned long)
                         m_player->set_health(0);
 
                     m_player->set_sanity(m_player->sanity() - ghost->damage()/2);
-                }    
+                }
             }
         }
     }
@@ -274,7 +271,7 @@ void
 Stage::draw_self()
 {
     Environment *env = Environment::get_instance();
-    env->canvas->clear(Color::BLUE);   
+    env->canvas->clear(Color::BLUE);
 }
 
 bool
@@ -304,7 +301,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
     {
         m_player->set_key(false);
         char new_stage[256];
-        sprintf(new_stage, "trans%d", m_num_id+1);
+        sprintf(new_stage, "trans%d", m_number_id+1);
         m_player->notify(Player::hitExitDoorID, new_stage);
         return true;
     }
@@ -316,7 +313,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
         m_player->die();
         if(m_player->life() > 0)
         {
-            sprintf(new_stage, "death%d", m_num_id);
+            sprintf(new_stage, "death%d", m_number_id);
             m_player->set_sanity(m_player->sanity()-20);
             *m_sanity = m_player->sanity();
         }
@@ -345,12 +342,12 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                         m_map->remove_item(item);
                         m_player->get_key();
 
-                        if(m_num_id >= 5)
+                        if(m_number_id >= 5)
                         {
                             m_map->m_boss->set_position(m_player->x(), m_player->y());
                             notify(Stage::summonBossID, "stage7");
                         }
-                        
+
                         return true;
                     }
 
@@ -389,7 +386,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             m_player->set_key(false);
                             finish();
                             char new_stage[256];
-                            sprintf(new_stage, "trans%d", m_num_id+1);
+                            sprintf(new_stage, "trans%d", m_number_id+1);
                             m_player->notify(Player::hitExitDoorID, new_stage);
                             return true;
                         }
@@ -424,10 +421,10 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             {
                                 item->set_x(b.x() - 1);
                                 //m_player->set_x(b.x() + b.w());
-                            } 
+                            }
                         }
                         else
-                        {  
+                        {
                             if(a.y() < b.y())
                             {
                                 item->set_y(b.y() + 1);
@@ -468,7 +465,7 @@ Stage::on_message(Object *, MessageID id, Parameters p)
                             guarda->receive_dmg(dmg);
                             return true;
                         }
-                        
+
                     }
                 }
             }

@@ -1,11 +1,8 @@
 #include "ghost.h"
-
 #include "core/level.h"
 #include "core/environment.h"
 #include "core/keyboardevent.h"
-
 #include <core/animation.h>
-
 #include <iostream>
 
 using namespace std;
@@ -121,7 +118,7 @@ Ghost::update_self(unsigned long elapsed)
 
     set_x(this->x());
     set_y(this->y());
-   
+
     update_direction(elapsed);
     m_animation->update(elapsed);
     walk();

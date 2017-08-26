@@ -45,12 +45,12 @@ Level * SevenKeys::load_level(const string& id) {
         return new Options();
     }
     else if (strstr(id.c_str(), "trans")) {
-        Environment *env = Environment::get_instance();
-        shared_ptr <Font> font = env->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
-        env->canvas->set_font(font);
+        Environment *environment = Environment::get_instance();
+        shared_ptr <Font> font = environment->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
+        environment->canvas->set_font(font);
 
-        double w = env->canvas->w();
-        double h = env->canvas->h();
+        double w = environment->canvas->w();
+        double h = environment->canvas->h();
 
         string ant = id;
 
@@ -94,21 +94,21 @@ Level * SevenKeys::load_level(const string& id) {
             sprintf(music_path, "res/sounds/Fase5.wav");
         }
 
-        env->music->play(music_path, -1);
-        env->canvas->draw(id, w/2, h/2 ,Color::RED);
+        environment->music->play(music_path, -1);
+        environment->canvas->draw(id, w/2, h/2 ,Color::RED);
         cout << novo << endl;
 
         return new FrontEnd(id, novo, path);
     }
 
     else if(strstr(id.c_str(), "death")) {
-        Environment *env = Environment::get_instance();
-        env->sfx->play("res/sounds/pregameover.wav",1);
-        shared_ptr <Font> font = env->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
-        env->canvas->set_font(font);
+        Environment *environment = Environment::get_instance();
+        environment->sfx->play("res/sounds/pregameover.wav",1);
+        shared_ptr <Font> font = environment->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
+        environment->canvas->set_font(font);
 
-        double w = env->canvas->w();
-        double h = env->canvas->h();
+        double w = environment->canvas->w();
+        double h = environment->canvas->h();
 
         string ant = id;
 
@@ -128,10 +128,10 @@ Level * SevenKeys::load_level(const string& id) {
         return new FrontEnd(id, novo, "res/images/transition.png");
     }
     else if(id == "gameover") {
-        Environment *env = Environment::get_instance();
-        env->sfx->play("res/sounds/gameOver.wav",1);
-        double w = env->canvas->w();
-        double h = env->canvas->h();
+        Environment *environment = Environment::get_instance();
+        environment->sfx->play("res/sounds/gameOver.wav",1);
+        double w = environment->canvas->w();
+        double h = environment->canvas->h();
 
         Level *lvl = new Level(id, id);
         lvl->set_dimensions(w, h);

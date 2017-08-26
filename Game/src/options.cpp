@@ -9,9 +9,9 @@ using namespace std;
 
 Options::Options() : Level("options") {
 
-    Environment *env = Environment::get_instance();
-    double w = env->canvas->w();
-    double h = env->canvas->h();
+    Environment *envvironment = Environment::get_instance();
+    double w = envvironment->canvas->w();
+    double h = envvironment->canvas->h();
 
     set_dimensions(w, h);
 
@@ -42,17 +42,17 @@ Options::~Options() {
 }
 
 void Options::draw_self() {
-    Environment *env = Environment::get_instance();
-    env->canvas->clear(Color::WHITE);
+    Environment *envvironment = Environment::get_instance();
+    envvironment->canvas->clear(Color::WHITE);
 
-    shared_ptr<Texture> image = env->resources_manager->get_texture("res/interface/menuOpcao/menuOpcao.png");
-    env->canvas->draw(image.get(), 1, 0);
+    shared_ptr<Texture> image = envvironment->resources_manager->get_texture("res/interface/menuOpcao/menuOpcao.png");
+    envvironment->canvas->draw(image.get(), 1, 0);
 }
 
 bool Options::on_message(Object *object, MessageID id, Parameters) {
-    Environment *env = Environment::get_instance();
+    Environment *envvironment = Environment::get_instance();
     Button *button = dynamic_cast<Button *>(object);
-    env->sfx->play("res/sounds/navegacaomenu.wav", 1);
+    envvironment->sfx->play("res/sounds/navegacaomenu.wav", 1);
 
     if (id != Button::clickedID) {
         return false;
@@ -63,14 +63,14 @@ bool Options::on_message(Object *object, MessageID id, Parameters) {
     }
 
     if(button->id() == "fullscreen" || button->id() == "windowmode" || button->id() == "back")
-            env->sfx->play("res/sounds/navegacaomenu.wav",1);
+            envvironment->sfx->play("res/sounds/navegacaomenu.wav",1);
 
     if (button->id() == "fullscreen") {
-        env->video->set_fullscreen();
+        envvironment->video->set_fullscreen();
         set_next("options");
     }
     else if (button->id() == "windowmode") {
-        env->video->set_fullscreen(false);
+        envvironment->video->set_fullscreen(false);
         set_next("options");
     }
 

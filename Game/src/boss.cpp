@@ -28,12 +28,10 @@ Boss::direction() {
     return m_direction;
 }
 
-void
-Boss::update_vision() {
+void Boss::update_vision() {
 }
 
-void
-Boss::set_direction(Direction direction) {
+void Boss::set_direction(Direction direction) {
     m_direction = direction;
 }
 

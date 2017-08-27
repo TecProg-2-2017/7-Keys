@@ -17,15 +17,18 @@ Options::Options() : Level("options") {
 
     Button *set_fullscreen = new Button(this, "fullscreen", "res/interface/menuOpcao/modoJanela.png",
         "res/interface/menuOpcao/SmodoJanela.png");
+
     set_fullscreen->align_to(this, Object::RIGHT, Object::MIDDLE);
 
     Button *windowmode = new Button(this, "windowmode", "res/interface/menuOpcao/comoJogar.png",
         "res/interface/menuOpcao/ScomoJogar.png");
+
     windowmode->align_to(this, Object::RIGHT, Object::NONE);
     windowmode->set_y(set_fullscreen->y() + set_fullscreen->h() + 20);
 
     Button *back = new Button(this, "back", "res/interface/menuOpcao/voltar.png",
         "res/interface/menuOpcao/Svoltar.png");
+
     back->align_to(this, Object::RIGHT, Object::NONE);
     back->set_y(windowmode->y() + windowmode->h() + 20);
 
@@ -42,6 +45,7 @@ Options::~Options() {
 }
 
 void Options::draw_self() {
+
     Environment *envvironment = Environment::get_instance();
     envvironment->canvas->clear(Color::WHITE);
 
@@ -50,6 +54,7 @@ void Options::draw_self() {
 }
 
 bool Options::on_message(Object *object, MessageID id, Parameters) {
+
     Environment *envvironment = Environment::get_instance();
     Button *button = dynamic_cast<Button *>(object);
     envvironment->sfx->play("res/sounds/navegacaomenu.wav", 1);
@@ -62,8 +67,9 @@ bool Options::on_message(Object *object, MessageID id, Parameters) {
         return false;
     }
 
-    if(button->id() == "fullscreen" || button->id() == "windowmode" || button->id() == "back")
-            envvironment->sfx->play("res/sounds/navegacaomenu.wav",1);
+    if(button->id() == "fullscreen" || button->id() == "windowmode" || button->id() == "back") {
+      envvironment->sfx->play("res/sounds/navegacaomenu.wav",1);
+    }
 
     if (button->id() == "fullscreen") {
         envvironment->video->set_fullscreen();
@@ -73,7 +79,6 @@ bool Options::on_message(Object *object, MessageID id, Parameters) {
         envvironment->video->set_fullscreen(false);
         set_next("options");
     }
-
     else if (button->id() == "back") {
         set_next("title");
     }

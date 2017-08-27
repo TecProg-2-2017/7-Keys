@@ -37,9 +37,12 @@ Stage::Stage(ObjectID id, int lives, double * sanity)
 
   m_num_id = atoi(aux);
 
-  int quantidade_de_salas = (3 + m_num_id + (m_num_id - 1) * 2) * (1 + (1 - *m_sanity/100) * 0.55);
+  int calc_aux = (1 + (1 - *m_sanity/100) * 0.55);
 
-  cout << "Iniciado Stage "<< m_num_id << ", " << quantidade_de_salas << " salas criadas." << endl;
+  int quantidade_de_salas = (3 + m_num_id + (m_num_id - 1) * 2) * calc_aux;
+
+  cout << "Iniciado Stage " << m_num_id << ", " << quantidade_de_salas;
+  cout << " salas criadas." << endl;
 
   m_map = new Map(quantidade_de_salas,m_num_id);
 
@@ -109,8 +112,8 @@ void Stage::update_self(unsigned long) {
         if (c.w() != 0 and c.h() > 50) {
           char message[512];
 
-          sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-              c.y(), c.w(), c.h());
+          sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(),
+                  item->id().c_str(), c.x(), c.y(), c.w(), c.h());
           notify(Stage::colisionID, message);
 
           if (a.y() > b.y()) {
@@ -121,8 +124,8 @@ void Stage::update_self(unsigned long) {
       else if (c.w() != 0 and c.h() != 0) {
         char message[512];
 
-        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-            c.y(), c.w(), c.h());
+        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(),
+                item->id().c_str(), c.x(), c.y(), c.w(), c.h());
         notify(Stage::colisionID, message);
 
         // Axis x
@@ -148,15 +151,17 @@ void Stage::update_self(unsigned long) {
       if (c.w() != 0 and c.h() != 0) {
         char message[512];
 
-        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(), item->id().c_str(), c.x(),
-            c.y(), c.w(), c.h());
+        sprintf(message, "%s,%s,%.2f,%.2f,%.2f,%.2f", m_player->id().c_str(),
+                item->id().c_str(), c.x(), c.y(), c.w(), c.h());
 
         notify(Stage::colisionID, message);
       }
 
       if (c.w() > 50 and c.h() > 50) {
         if (item->id() == "door") {
-          if (item->x() == 0 && item->y() == 320) {  // m_map->current_room->r_left
+          // m_map->current_room->r_left
+          if (item->x() == 0 && item->y() == 320) {
+
             m_player->set_current("left", 1120, m_player->y());
             m_map->m_boss->set_position(1120, m_player->y());
           }
@@ -332,7 +337,8 @@ bool Stage::on_message(Object *, MessageID id, Parameters p) {
             m_map->remove_item(item);
           }
 
-          if (item->id() == "Garrafa" || item->id() == "Faca" || item->id() == "Cacetete") {
+          if (item->id() == "Garrafa" || item->id() == "Faca"
+              || item->id() == "Cacetete") {
             m_player->get_weapon(item->id());
             m_map->remove_item(item);
           }

@@ -442,103 +442,87 @@ void Room::add_corners(const string& name) {
 
             sprintf(path, "res/tile_sheets/%s%d%d.png", name.c_str(),stages, i + 1);
         }
-
         Image *image = new Image(nullptr, name, path);
-
-        if (not image)
+        
+        if (not image){
             continue;
-
+        }
         double x = i % 3 ? canvas->w() - image->w() : 0;
         double y = i/2 ? canvas->h() - image->h() : 0;
 
         delete image;
-
 	    Item *corner = new Item(this, name, path, x, y, INFINITE, false);
 	    add_child(corner);
     }
 }
 
-void
-Room::add_guard(const string& name)
-{
-
+void Room::add_guard(const string& name){
     string type = "easy";
     int random = randint(0,2);
 
-    if(random < 1)
+    if(random < 1){
         type = "easy";
-    if(random < 2)
+    }
+    if(random < 2){
         type = "normal";
-    else
+    }
+    else{
         type = "hard";
-
-
-    for(int i = 0; i < (stage_id / 3) + 1; i++)
-    {
-        Guard *guard = new Guard(this, name, 0, 0, 60, false, type, randint(0,3));
+    }
+    for(int i = 0; i < (stage_id / 3) + 1; i++){
+        Guard *guard = new Guard(this, name, 0, 0, 60, 
+                false, type, randint(0,3));
         place(guard, -1, -1);
 	    add_child(guard);
     }
 }
 
-void
-Room::add_ghost(const string& name)
-{
-
+void Room::add_ghost(const string& name){
     string type = "easy";
 
-    for(int i = 0; i < (stage_id / 3); i++)
-    {
-        Ghost *ghost = new Ghost(this, name, 0, 0, 9999, true, "normal", randint(0,3));
+    for(int i = 0; i < (stage_id / 3); i++){
+        Ghost *ghost = new Ghost(this, name, 0, 0, 9999, true,
+                "normal", randint(0,3));
         place(ghost, -1, -1);
         add_child(ghost);
     }
 }
 
-bool
-Room::place(Object *object, double x, double y)
-{
+bool Room::place(Object *object, double x, double y){
     int w = center_area.w();
     int h = center_area.h();
-
     int tries = 0;
     bool ok, randomize = x < 0 and y < 0;
 
-    do {
+    do{
         ok = true;
         ++tries;
-
-        if (randomize)
-        {
+        if (randomize){
             x = (rand() % w) + center_area.x();
             y = (rand() % h) + center_area.y();
         }
-
-        if (x + object->w() > w + center_area.x())
+        if (x + object->w() > w + center_area.x()){
             x = w + center_area.x() - object->w();
-
-        if (y + object->h() > h + center_area.y())
+        }
+        if (y + object->h() > h + center_area.y()){
             y = h + center_area.y() - object->h();
-
-        for (auto obj : children())
-        {
-            if (obj->walkable())
+        }
+        for (auto obj : children()){
+            if (obj->walkable()){
                 continue;
-
+            }
             Rect a { x, y, object->w(), object->h() };
             Rect b = obj->bounding_box();
             Rect c = a.intersection(b);
-
-            if (c.w() or c.h())
-            {
+            if (c.w() or c.h()){
                 ok = false;
                 break;
             }
         }
 
-        if (tries > 10)
+        if (tries > 10){
             break;
-
+        }
     } while (not ok and randomize);
 
     object->set_position(x, y);
@@ -546,108 +530,75 @@ Room::place(Object *object, double x, double y)
     return ok;
 }
 
-void
-Room::notify_creation(const string& position)
-{
-    //Environment *env = Environment::get_instance();
-    //Canvas *canvas = env->canvas;
-
-    if(position == "left")
-    {
+void Room::notify_creation(const string& position){
+    if(position == "left"){
         add_door("normal", 'l', 0, 320);
     }
-    else if(position == "top")
-    {
+    else if(position == "top"){
         add_door("normal", 't', 600, 0);
     }
-    else if(position == "right")
-    {
+    else if(position == "right"){
         add_door("normal", 'r', 1200, 320);
     }
-    else if(position == "bottom")
-    {
+    else if(position == "bottom"){
        add_door("normal", 'b', 600, 640);
     }
 }
 
-void
-Room::update_self(unsigned long)
-{
+void Room::update_self(unsigned long){
     const list<Object *> npcs = children();
     quad->clear();
-    for (auto npc : npcs)
-    {
-        if(npc->id() == "guard")
+    for (auto npc : npcs){
+        if(npc->id() == "guard"){
             quad->insert(npc);
+        }
     }
-
-    for(auto npc: npcs)
-    {
+    for(auto npc: npcs){
         list<Object*> returnObjects;
+
         returnObjects.erase(returnObjects.begin(), returnObjects.end());
-
         returnObjects = quad->retrieve(returnObjects, npc);
-
-        for(auto npc2 : returnObjects)
-        {
+        for(auto npc2 : returnObjects){
             Rect a = npc2->bounding_box();
             Rect b = npc->bounding_box();
             Rect c = a.intersection(b);
 
-            if(npc2->id()== "guard")
-            {
+            if(npc2->id()== "guard"){
                 Guard * guarda = (Guard*) npc2;
-
-                if(npc->walkable() == false)
-                {
-                    if (c.w() > 5 and c.h() > 5)
-                    {
-                        if(guarda->m_old_type == "hard")
-                        {
-                            if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
-                            {
-                                if(a.x() > b.x())
-                                {
+                if(npc->walkable() == false){
+                    if (c.w() > 5 and c.h() > 5){
+                        if(guarda->m_old_type == "hard"){
+                            if(abs(a.x() - b.x()) > abs(a.y() - b.y())){
+                                if(a.x() > b.x()){
                                     npc->set_x(a.x() - b.w() + 1);
                                 }
-                                else if(a.x() < b.x())
-                                {
+                                else if(a.x() < b.x()){
                                     npc->set_x(a.x() + a.w() - 1);
                                 }
                             }
-                            else
-                            {
-                                if(a.y() > b.y())
-                                {
+                            else{
+                                if(a.y() > b.y()){
                                     npc->set_y(a.y() - b.h() + 1);
                                 }
-                                else if(a.y() < b.y())
-                                {
+                                else if(a.y() < b.y()){
                                     npc->set_y(a.y() + a.h() - 1);
                                 }
                             }
                         }
-                        else
-                        {
-                            if(abs(a.x() - b.x()) > abs(a.y() - b.y()))
-                            {
-                                if(a.x() < b.x())
-                                {
+                        else{
+                            if(abs(a.x() - b.x()) > abs(a.y() - b.y())){
+                                if(a.x() < b.x()){
                                     npc2->set_x(b.x() - a.w() + 1);
                                 }
-                                else if(a.x() > b.x())
-                                {
+                                else if(a.x() > b.x()){
                                     npc2->set_x(b.x() + b.w() - 1);
                                 }
                             }
-                            else
-                            {
-                                if(a.y() < b.y())
-                                {
+                            else{
+                                if(a.y() < b.y()){
                                     npc2->set_y(b.y() - a.h() + 1);
                                 }
-                                else if(a.y() > b.y())
-                                {
+                                else if(a.y() > b.y()){
                                     npc2->set_y(b.y() + b.h() - 1);
                                 }
                             }
@@ -656,19 +607,18 @@ Room::update_self(unsigned long)
                 }
             }
         }
-
-
-        if(npc->id() == "guard")
-        {
+        if(npc->id() == "guard"){
             Guard * guarda = (Guard*) npc;
-            if (guarda->health() < 1)
-            {
-                Ghost *ghost = new Ghost(this, "ghost", 0, 0, 9999, true, guarda->m_old_type, randint(0,3));
+            if (guarda->health() < 1){
+                Ghost *ghost = new Ghost(this, "ghost", 0, 0, 9999, true, 
+                        guarda->m_old_type, randint(0,3));
                 string path;
-                if(guarda->m_old_type != "hard")
+                if(guarda->m_old_type != "hard"){
                     path = "res/sprites/death_guard1.png";
-                else
+                }
+                else{
                     path = "res/sprites/death_guard2.png";
+                }
                 Item *body = new Item(this, "body", path, 0, 0, 9999, true);
                 place(body, npc->x(), npc->y());
                 remove_child(npc);

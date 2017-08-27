@@ -16,44 +16,37 @@ using namespace std;
 
 constexpr double SPEED { 300 };
 
-class Player::SpriteState
-{
+class Player::SpriteState{
 public:
-    virtual ~SpriteState() {}
-    virtual void draw_self() {}
-    virtual void update_self(unsigned long) {}
-    virtual bool on_event(const KeyboardEvent&) { return false; }
+  virtual ~SpriteState() {}
+  virtual void draw_self() {}
+  virtual void update_self(unsigned long) {}
+  virtual bool on_event(const KeyboardEvent&) { return false; }
 };
 
-class Idle : public Player::SpriteState
-{
+class Idle : public Player::SpriteState{
 public:
     Idle(Player *parent,Animation* animation_idle) : m_parent(parent),
-        m_animation(new Animation("res/sprites/idle.png", 0, 0, 41, 81, 1,
-        400, true))
-    {
+      m_animation(new Animation("res/sprites/idle.png", 0, 0, 41, 81, 1,
+      400, true)){
         parent->set_dimensions(m_animation->w(), m_animation->h());
     }
 
     ~Idle() {}
 
-    void draw_self()
-    {
-        m_animation->draw(m_parent->x(), m_parent->y());
+    void draw_self(){
+      m_animation->draw(m_parent->x(), m_parent->y());
     }
 
-    void update_self(unsigned long elapsed)
-    {
+    void update_self(unsigned long elapsed){
         m_animation->update(elapsed);
 
         short dir = m_parent->direction();
 
-        if (dir >= 0)
-        {
+        if (dir >= 0){
             m_parent->report_event(Player::MOVED);
             m_animation->set_row(dir);
         }
-        
     }
 
 private:
@@ -61,38 +54,33 @@ private:
     unique_ptr<Animation> m_animation;
 };
 
-class Running : public Player::SpriteState
-{
+class Running : public Player::SpriteState{
 public:
     Running(Player *parent,Animation* animation_running) : m_parent(parent),
-        m_animation(new Animation("res/sprites/running.png", 0, 0, 60,
-        60, 8, 60, true))
-    {
+      m_animation(new Animation("res/sprites/running.png", 0, 0, 60,
+      60, 8, 60, true)){
         parent->set_dimensions(m_animation->w(), m_animation->h());
     }
 
     ~Running() {}
 
-    void draw_self()
-    {
-        m_animation->draw(m_parent->x(), m_parent->y());
+    void draw_self(){
+      m_animation->draw(m_parent->x(), m_parent->y());
     }
 
-    void update_self(unsigned long elapsed)
-    {
-        m_animation->update(elapsed);
+    void update_self(unsigned long elapsed){
+      m_animation->update(elapsed);
 
-        short dir = m_parent->direction();
+      short dir = m_parent->direction();
 
-        if (dir == -1)
-        {
-            m_parent->report_event(Player::STOPPED);
-        }else
-        {
-            m_animation->set_row(dir);
-        }
+      if (dir == -1){
+        m_parent->report_event(Player::STOPPED);
+      }
+      else{
+        m_animation->set_row(dir);
+      }
 
-        /*else if (dir < 0)
+      /*else if (dir < 0)
         {
             m_animation->set_row(0);
         } else
@@ -107,20 +95,18 @@ private:
 };
 
 
-Player::Player(Object *parent, ObjectID id,std::map<int,Animation*>actions, Map * current_map)
-    : Object(parent, id), m_left(0), m_right(0), m_up(0), m_down(0), m_last(0), m_state(IDLE), current_map(current_map), key(false)
-{
+Player::Player(Object *parent, ObjectID id,std::map<int,Animation*>actions,
+  Map *current_map) : Object(parent, id), m_left(0), m_right(0), m_up(0),
+  m_down(0), m_last(0), m_state(IDLE), current_map(current_map), key(false){
     Environment *env = Environment::get_instance();
     env->events_manager->register_listener(this);
 
-    for (int state = IDLE; state < STATE_TOTAL; ++state)
-    {
-        m_states[state] = nullptr;
+    for (int state = IDLE; state < STATE_TOTAL; ++state){
+      m_states[state] = nullptr;
 
-        for (int event = STOPPED; event < EVENT_TOTAL; ++event)
-        {
-            m_fst[state][event] = NONE;
-        }
+      for (int event = STOPPED; event < EVENT_TOTAL; ++event){
+        m_fst[state][event] = NONE;
+      }
     }
 
     m_states[IDLE] = new Idle(this,actions[IDLE]);
@@ -130,73 +116,66 @@ Player::Player(Object *parent, ObjectID id,std::map<int,Animation*>actions, Map 
     m_fst[RUNNING][STOPPED] = IDLE;
 }
 
-Player::~Player()
-{
-    Environment *env = Environment::get_instance();
-    env->events_manager->unregister_listener(this);
+Player::~Player(){
+  Environment *env = Environment::get_instance();
+  env->events_manager->unregister_listener(this);
 
-    for (int state = IDLE; state < STATE_TOTAL; ++state)
-    {
-        delete m_states[state];
-    }
+  for (int state = IDLE; state < STATE_TOTAL; ++state){
+    delete m_states[state];
+  }
 }
 
-bool
-Player::on_event(const KeyboardEvent& event)
-{
-    switch (event.state())
-    {
-        case KeyboardEvent::PRESSED:
-        switch (event.key())
-        {
+bool Player::on_event(const KeyboardEvent& event){
+  switch (event.state()){
+    case KeyboardEvent::PRESSED:
+      switch (event.key()){
         case KeyboardEvent::LEFT:
-                m_left = 1;
-                return true;
+          m_left = 1;
+          return true;
 
-            case KeyboardEvent::RIGHT:
-                m_right = 1;
-                return true;
-                
-            case KeyboardEvent::UP:
-                m_up = 1;
-                return true;
-                
-            case KeyboardEvent::DOWN:
-                m_down = 1;
-                return true;
-                
-            default:
-                return false;
-        }
+        case KeyboardEvent::RIGHT:
+          m_right = 1;
+          return true;
 
-        case KeyboardEvent::RELEASED:
-        switch (event.key())
-        {
-            case KeyboardEvent::LEFT:
-                m_left = 0;
-                return true;
+        case KeyboardEvent::UP:
+          m_up = 1;
+          return true;
 
-            case KeyboardEvent::RIGHT:
-                m_right = 0;
-                return true;
-                
-            case KeyboardEvent::UP:
-                m_up = 0;
-                return true;
-                
-            case KeyboardEvent::DOWN:
-                m_down = 0;
-                return true;
-                
-            default:
-                return false;
-        }
+        case KeyboardEvent::DOWN:
+          m_down = 1;
+          return true;
+
+          default:
+          return false;
+      }
+
+    case KeyboardEvent::RELEASED:
+      switch (event.key()){
+        case KeyboardEvent::LEFT:
+          m_left = 0;
+          return true;
+
+        case KeyboardEvent::RIGHT:
+          m_right = 0;
+          return true;
+
+        case KeyboardEvent::UP:
+          m_up = 0;
+          return true;
+
+        case KeyboardEvent::DOWN:
+          m_down = 0;
+          return true;
 
         default:
-            break;
-    }
+          return false;
+      }
 
-    return false;
+    default:
+      break;
+  }
+
+  return false;
 }
 
 void
@@ -230,7 +209,7 @@ Player::update_self(unsigned long elapsed)
 
     double dx = m_left*(-SPEED) + m_right*SPEED;
     double x = this->x() + dx*((elapsed - m_last)/1000.0);
-    
+
     double dy = m_up*(-SPEED) + m_down*SPEED;
     double y = this->y() + dy*((elapsed - m_last)/1000.0);
 
@@ -247,12 +226,12 @@ Player::update_self(unsigned long elapsed)
         x = env->canvas->w() - w();
     }
 
-    if ((x == env->canvas->w() - w() and dx > 0) or 
+    if ((x == env->canvas->w() - w() and dx > 0) or
         (x == 0 and dx < 0))
     {
         change_state(Player::IDLE, m_state);
     }
-    
+
     if (y < 0)
     {
         y = 0;
@@ -263,7 +242,7 @@ Player::update_self(unsigned long elapsed)
         y = env->canvas->h() - h();
     }
 
-    if ((y == env->canvas->h() - h() and dy > 0) or 
+    if ((y == env->canvas->h() - h() and dy > 0) or
         (y == 0 and dy < 0))
     {
         change_state(Player::IDLE, m_state);
@@ -313,7 +292,7 @@ Player::update_self(unsigned long elapsed)
                 current_map->current_room->remove_child(aux[i]);
                 cout << "peguei a chave" << endl;
                 pick_key();
-            } 
+            }
         }
         else if(aux[i]->type == "finaldoor")
         {
@@ -326,7 +305,7 @@ Player::update_self(unsigned long elapsed)
                     //Passa pro prox level
                     Level *next_level = new Level("stage","stage2");
                     next_level->set_next("stage2");
-                } 
+                }
             }
         }
     }
@@ -337,7 +316,7 @@ Player::enter_room(Room * anterior, Room * nova, int posx, int posy)
 {
     set_position(posx, posy);
     current_map->enter_room(anterior, nova);
-    
+
 }
 
 void

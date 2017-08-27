@@ -6,9 +6,7 @@
 
 using namespace std;
 
-Creditos::Creditos()
-    : Level("creditos")
-{
+Creditos::Creditos() : Level("creditos") {
     Environment *environment = Environment::get_instance();
 
     double w = environment->canvas->w();
@@ -30,6 +28,7 @@ Creditos::~Creditos() {
 }
 
 void Creditos::draw_self() {
+
     Environment *environment = Environment::get_instance();
     environment->canvas->clear(Color::WHITE);
 
@@ -38,6 +37,7 @@ void Creditos::draw_self() {
 }
 
 bool Creditos::on_message(Object *object, MessageID id, Parameters) {
+
     if (id != Button::clickedID) {
         return false;
     }
@@ -47,6 +47,7 @@ bool Creditos::on_message(Object *object, MessageID id, Parameters) {
     if (not button) {
         return false;
     }
+
     if (button->id() == "back") {
         set_next("title");
     }

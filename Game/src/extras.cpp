@@ -18,15 +18,19 @@ Extras::Extras() : Level("extras") {
 
     Button *cutscene = new Button(this, "cutscene", "res/interface/menuExtras/cutscenes.png",
         "res/interface/menuExtras/Scutscenes.png");
+
     cutscene->align_to(this, Object::MIDDLE, Object::NONE);
     cutscene->set_y(200);
+
     Button *historia = new Button(this, "historia", "res/interface/menuExtras/historia.png",
         "res/interface/menuExtras/Shistoria.png");
+
     historia->align_to(this, Object::MIDDLE, Object::NONE);
     historia->set_y(cutscene->y() + cutscene->h()+20);
 
     Button *back = new Button(this, "back", "res/interface/menuExtras/voltar.png",
         "res/interface/menuExtras/Svoltar.png");
+
     back->align_to(this, Object::MIDDLE, Object::NONE);
     back->set_y(historia->y() + historia->h()+20);
 
@@ -37,7 +41,6 @@ Extras::Extras() : Level("extras") {
     add_child(cutscene);
     add_child(historia);
     add_child(back);
-
 }
 
 Extras::~Extras() {
@@ -53,6 +56,7 @@ void Extras::draw_self() {
 }
 
 bool Extras::on_message(Object *object, MessageID id, Parameters) {
+
     if (id != Button::clickedID) {
         return false;
     }
@@ -62,6 +66,7 @@ bool Extras::on_message(Object *object, MessageID id, Parameters) {
     if (not button) {
         return false;
     }
+
     if (button->id() == "back") {
         set_next("title");
     }
@@ -70,18 +75,3 @@ bool Extras::on_message(Object *object, MessageID id, Parameters) {
 
     return true;
 }
-/*
-SMPEG * inicializa_smpeg ("res/extras/celera.mpg", U
-SDL_Surface * tela);
-
-SMPEG *mpeg;
-
-int skip, sair;
-
-mpeg = NULL;
-
-skip = 0;
-sair = 0;
-
-SMPEG_play (mpeg);
-*/

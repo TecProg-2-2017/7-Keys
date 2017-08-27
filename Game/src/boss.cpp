@@ -17,14 +17,14 @@ Boss::Boss(Object *parent, ObjectID id, double x, double y, int mass, bool walka
     this->set_walkable(walkable);
     this->set_summoned(false);
     this->set_created(false);
+
     update_vision();
 }
 
 Boss::~Boss() {
 }
 
-Boss::Direction
-Boss::direction() {
+Boss::Direction Boss::direction() {
     return m_direction;
 }
 

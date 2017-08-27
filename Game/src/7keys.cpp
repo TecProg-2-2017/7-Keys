@@ -18,6 +18,7 @@
 #include <cstring>
 
 SevenKeys::SevenKeys() : Game("fone") {
+
     AudioManagerMusic * music2 = new AudioManagerMusic();
     music2 -> play("res/sounds/musicaMenu.wav", -1);
     lives = 5;
@@ -45,6 +46,7 @@ Level * SevenKeys::load_level(const string& id) {
         return new Options();
     }
     else if (strstr(id.c_str(), "trans")) {
+
         Environment *environment = Environment::get_instance();
         shared_ptr <Font> font = environment->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
         environment->canvas->set_font(font);
@@ -57,13 +59,8 @@ Level * SevenKeys::load_level(const string& id) {
         Level *lvl = new Level(id, id);
         lvl->set_dimensions(w, h);
 
-        // Changing a constant variable
-
-        /*string *str;
-        str = (string*)(&id);
-        *str = "stage1";*/
-
         char novo[256];
+
         sprintf(novo, "%s",id.c_str());
         novo[0] = 's';
         novo[1] = 't';
@@ -102,6 +99,7 @@ Level * SevenKeys::load_level(const string& id) {
     }
 
     else if(strstr(id.c_str(), "death")) {
+
         Environment *environment = Environment::get_instance();
         environment->sfx->play("res/sounds/pregameover.wav",1);
         shared_ptr <Font> font = environment->resources_manager->get_font("res/fonts/TakaoExGothic.ttf");
@@ -109,13 +107,13 @@ Level * SevenKeys::load_level(const string& id) {
 
         double w = environment->canvas->w();
         double h = environment->canvas->h();
-
         string ant = id;
-
         Level *lvl = new Level(id, id);
+
         lvl->set_dimensions(w, h);
 
         char novo[256];
+
         sprintf(novo, "%s",id.c_str());
         novo[0] = 's';
         novo[1] = 't';
@@ -128,6 +126,7 @@ Level * SevenKeys::load_level(const string& id) {
         return new FrontEnd(id, novo, "res/images/transition.png");
     }
     else if(id == "gameover") {
+
         Environment *environment = Environment::get_instance();
         environment->sfx->play("res/sounds/gameOver.wav",1);
         double w = environment->canvas->w();

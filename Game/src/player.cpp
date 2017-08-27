@@ -529,7 +529,7 @@ class Idle : public SpriteState {
         }
 
 
-        if(! m_player->m_sanity_loss) {
+        if(!m_player->m_sanity_loss) {
             m_player->m_sanity_loss = elapsed;
         }
 
@@ -542,22 +542,26 @@ class Idle : public SpriteState {
         }
 
         if (m_left) {
+
             m_player->set_moviment(-1.0, 0.0);
             m_player->set_direction(Player::LEFT);
             m_player->report_event(Player::MOVED);
         }
         else if (m_right){
+
             m_player->set_moviment(0.0, 0.0);
             m_player->set_direction(Player::RIGHT);
             m_player->report_event(Player::MOVED);
         }
 
         if (m_top) {
+
             m_player->set_moviment(0.0, -1.0);
             m_player->set_direction(Player::UP);
             m_player->report_event(Player::MOVED);
         }
         else if (m_down) {
+
             m_player->set_moviment(0.0, 1.0);
             m_player->set_direction(Player::DOWN);
             m_player->report_event(Player::MOVED);
@@ -570,6 +574,7 @@ class Idle : public SpriteState {
     }
 
 private:
+
     Player *m_player;
     unique_ptr<Animation> m_animation;
     int m_left, m_right, m_top, m_down;
@@ -577,6 +582,7 @@ private:
 };
 
 class Running : public SpriteState {
+
 public:
     Running(Player *player, bool key)
         : m_player(player), m_animation(
@@ -585,12 +591,13 @@ public:
         m_key(key), m_running(false), m_pushing(false) {
     }
 
-    ~Running() {}
+    ~Running() {
+    }
 
     const double m_speed = 250.0;
 
-    void enter(int from)
-    {
+    void enter(int from) {
+
         m_player->set_dimensions(m_animation->w(), m_animation->h());
 
         Player::Direction dir = m_player->direction();
@@ -603,6 +610,7 @@ public:
         m_running = 0;
 
         if (from == Player::IDLE) {
+
             auto moviment = m_player->moviment();
             double x = moviment.first * m_speed;
             double y = moviment.second * m_speed;
@@ -614,6 +622,7 @@ public:
     }
 
     void draw() {
+
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
         m_player->show_sanity();
@@ -622,99 +631,101 @@ public:
     }
 
     bool on_event(const KeyboardEvent& event) {
+
         switch (event.state()) {
-        case KeyboardEvent::PRESSED:
-            switch (event.key()) {
-            case KeyboardEvent::LEFT:
-            case KeyboardEvent::A:
-                m_left = 1;
-                return true;
+            case KeyboardEvent::PRESSED:
+                switch (event.key()) {
+                  case KeyboardEvent::LEFT:
+                  case KeyboardEvent::A:
+                    m_left = 1;
+                  return true;
 
-            case KeyboardEvent::RIGHT:
-            case KeyboardEvent::D:
-                m_right = 1;
-                return true;
+                  case KeyboardEvent::RIGHT:
+                  case KeyboardEvent::D:
+                    m_right = 1;
+                  return true;
 
-            case KeyboardEvent::UP:
-            case KeyboardEvent::W:
-                m_top = 1;
-                return true;
+                  case KeyboardEvent::UP:
+                  case KeyboardEvent::W:
+                    m_top = 1;
+                  return true;
 
-            case KeyboardEvent::DOWN:
-            case KeyboardEvent::S:
-                m_down = 1;
-                return true;
+                  case KeyboardEvent::DOWN:
+                  case KeyboardEvent::S:
+                    m_down = 1;
+                  return true;
 
-            case KeyboardEvent::L:
-                m_running = true;
-                return true;
+                  case KeyboardEvent::L:
+                    m_running = true;
+                  return true;
 
-            case KeyboardEvent::Q:
-                m_player->use_pill();
-                return true;
+                  case KeyboardEvent::Q:
+                    m_player->use_pill();
+                  return true;
 
-            case KeyboardEvent::K:
-                m_player->take_item();
-                m_pushing = true;
-                return true;
+                  case KeyboardEvent::K:
+                    m_player->take_item();
+                    m_pushing = true;
+                  return true;
 
-            case KeyboardEvent::E:
-                m_player->open_door();
-                return true;
+                  case KeyboardEvent::E:
+                    m_player->open_door();
+                  return true;
 
-            case KeyboardEvent::C:
-                m_player->report_event(Player::DUCKING);
-                return true;
+                  case KeyboardEvent::C:
+                    m_player->report_event(Player::DUCKING);
+                  return true;
 
-            case KeyboardEvent::J:
-                m_player->hit();
-                return true;
+                  case KeyboardEvent::J:
+                    m_player->hit();
+                  return true;
 
-            default:
+                  default:
+                    break;
+                  }
                 break;
-            }
-            break;
 
-        case KeyboardEvent::RELEASED:
-            switch (event.key()) {
-            case KeyboardEvent::LEFT:
-            case KeyboardEvent::A:
-                m_left = 0;
-                return true;
+                case KeyboardEvent::RELEASED:
+                  switch (event.key()) {
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                      m_left = 0;
+                    return true;
 
-            case KeyboardEvent::RIGHT:
-            case KeyboardEvent::D:
-                m_right = 0;
-                return true;
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                      m_right = 0;
+                    return true;
 
-            case KeyboardEvent::UP:
-            case KeyboardEvent::W:
-                m_top = 0;
-                return true;
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                      m_top = 0;
+                    return true;
 
-            case KeyboardEvent::DOWN:
-            case KeyboardEvent::S:
-                m_down = 0;
-                return true;
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                      m_down = 0;
+                    return true;
 
-            case KeyboardEvent::L:
-                m_running = false;
-                return true;
+                    case KeyboardEvent::L:
+                      m_running = false;
+                    return true;
 
-            case KeyboardEvent::K:
-                m_pushing = false;
-                return true;
+                    case KeyboardEvent::K:
+                      m_pushing = false;
+                    return true;
 
-            default:
-                break;
-            }
-            break;
+                    default:
+                      break;
+                    }
+                  break;
         }
 
         return false;
     }
 
     void update(unsigned long elapsed) {
+
         double speed = m_speed;
 
         if(m_player->health() < 1) {
@@ -722,17 +733,20 @@ public:
         }
 
         if(m_player->stamina() < 100) {
-            m_player->set_stamina(m_player->stamina() + 0.05);
+
+          m_player->set_stamina(m_player->stamina() + 0.05);
             if(m_player->stamina() > 100) {
                 m_player->set_stamina(100);
             }
         }
 
         if(m_running) {
+
             if(m_player->stamina() > 1) {
 
                 speed += 50 + 10 * ((int)m_player->stamina())/5;
                 m_player->set_stamina(m_player->stamina() - 0.25);
+
                 if(m_player->stamina() < 1) {
                     m_player->set_stamina(-(0.05 * 1000));
                 }
@@ -743,11 +757,12 @@ public:
             m_player->push_item();
         }
 
-        if(! m_player->m_sanity_loss) {
+        if(!m_player->m_sanity_loss) {
             m_player->m_sanity_loss = elapsed;
         }
 
         if(elapsed - m_player->m_sanity_loss > 3000) {
+
             m_player->set_sanity(m_player->sanity() - 1);
             if(m_player->sanity() < 0)
                 m_player->set_sanity(0);
@@ -755,18 +770,22 @@ public:
         }
 
         if (m_left) {
+
             m_player->set_direction(Player::LEFT);
             m_player->report_event(Player::MOVED);
         }
         else if (m_right) {
+
             m_player->set_direction(Player::RIGHT);
             m_player->report_event(Player::MOVED);
         }
         if (m_top) {
+
             m_player->set_direction(Player::UP);
             m_player->report_event(Player::MOVED);
         }
         else if (m_down) {
+
             m_player->set_direction(Player::DOWN);
             m_player->report_event(Player::MOVED);
         }
@@ -780,6 +799,7 @@ public:
 
         Player::Direction dir = m_player->direction();
         int row = dir;
+
         m_animation->set_row(row);
 
         if (not m_last) {
@@ -790,8 +810,6 @@ public:
         unsigned long delta = elapsed - m_last;
         double x = m_player->x() + (moviment.first * delta)/1000.0;
         double y = m_player->y() + (moviment.second * delta)/1000.0;
-
-        /* limite da sala */
         Environment *env = Environment::get_instance();
 
         if (x + m_player->w() > env->canvas->w()) {
@@ -819,25 +837,27 @@ public:
         m_animation->update(elapsed);
     }
 
-private:
-    Player *m_player;
-    unique_ptr<Animation> m_animation;
-    short m_left, m_right, m_top, m_down;
-    unsigned long m_last;
-    bool m_key, m_running, m_pushing;
+    private:
+        Player *m_player;
+        unique_ptr<Animation> m_animation;
+        short m_left, m_right, m_top, m_down;
+        unsigned long m_last;
+        bool m_key, m_running, m_pushing;
 };
 
 class Duck : public SpriteState {
-public:
-    Duck(Player *player)
-        : m_player(player), m_animation(new Animation("res/sprites/duck.png",
+    public:
+        Duck(Player *player)
+          : m_player(player), m_animation(new Animation("res/sprites/duck.png",
             0, 0, 70, 70, 2, 1000, true)), m_left(0), m_right(0), m_top(0),
-        m_down(0) {
+            m_down(0) {
     }
 
-    ~Duck() {}
+    ~Duck() {
+    }
 
     void enter(int) {
+
         m_player->set_dimensions(m_animation->w(), m_animation->h());
         m_right = m_left = m_down = m_top = 0;
     }
@@ -846,94 +866,95 @@ public:
     }
 
     bool on_event(const KeyboardEvent& event) {
+
         switch (event.state()) {
-        case KeyboardEvent::PRESSED:
-            switch (event.key()) {
-            case KeyboardEvent::LEFT:
-            case KeyboardEvent::A:
-                m_left = 1;
-                return true;
+          case KeyboardEvent::PRESSED:
+                switch (event.key()) {
+                  case KeyboardEvent::LEFT:
+                  case KeyboardEvent::A:
+                    m_left = 1;
+                  return true;
 
-            case KeyboardEvent::RIGHT:
-            case KeyboardEvent::D:
-                m_right = 1;
-                return true;
+                  case KeyboardEvent::RIGHT:
+                  case KeyboardEvent::D:
+                    m_right = 1;
+                  return true;
 
-            case KeyboardEvent::UP:
-            case KeyboardEvent::W:
-                m_top = 1;
-                return true;
+                  case KeyboardEvent::UP:
+                  case KeyboardEvent::W:
+                    m_top = 1;
+                  return true;
 
-            case KeyboardEvent::DOWN:
-            case KeyboardEvent::S:
-                m_down = 1;
-                return true;
+                  case KeyboardEvent::DOWN:
+                  case KeyboardEvent::S:
+                    m_down = 1;
+                  return true;
 
-            case KeyboardEvent::Q:
-                m_player->use_pill();
-                return true;
+                  case KeyboardEvent::Q:
+                    m_player->use_pill();
+                  return true;
 
-            case KeyboardEvent::E:
-                m_player->open_door();
-                return true;
+                  case KeyboardEvent::E:
+                    m_player->open_door();
+                  return true;
 
-            case KeyboardEvent::K:
-                m_player->take_item();
-                return true;
+                  case KeyboardEvent::K:
+                    m_player->take_item();
+                  return true;
 
-            case KeyboardEvent::C:
-                m_player->report_event(Player::STANDING);
-                return true;
+                  case KeyboardEvent::C:
+                    m_player->report_event(Player::STANDING);
+                  return true;
 
-            case KeyboardEvent::J:
-                m_player->hit();
-                return true;
+                  case KeyboardEvent::J:
+                    m_player->hit();
+                  return true;
 
-            default:
+                  default:
+                    break;
+                  }
                 break;
-            }
-            break;
 
-        case KeyboardEvent::RELEASED:
-            switch (event.key()) {
-            case KeyboardEvent::LEFT:
-            case KeyboardEvent::A:
-                m_left = 0;
-                return true;
+                case KeyboardEvent::RELEASED:
+                    switch (event.key()) {
+                      case KeyboardEvent::LEFT:
+                      case KeyboardEvent::A:
+                        m_left = 0;
+                      return true;
 
-            case KeyboardEvent::RIGHT:
-            case KeyboardEvent::D:
-                m_right = 0;
-                return true;
+                      case KeyboardEvent::RIGHT:
+                      case KeyboardEvent::D:
+                        m_right = 0;
+                      return true;
 
-            case KeyboardEvent::UP:
-            case KeyboardEvent::W:
-                m_top = 0;
-                return true;
+                      case KeyboardEvent::UP:
+                      case KeyboardEvent::W:
+                        m_top = 0;
+                      return true;
 
-            case KeyboardEvent::DOWN:
-            case KeyboardEvent::S:
-                m_down = 0;
-                return true;
+                      case KeyboardEvent::DOWN:
+                      case KeyboardEvent::S:
+                        m_down = 0;
+                      return true;
 
-            case KeyboardEvent::O:
-                m_player->jump_level();
-                return true;
+                      case KeyboardEvent::O:
+                        m_player->jump_level();
+                      return true;
 
-            case KeyboardEvent::K:
-                m_player->take_item();
-                return true;
+                      case KeyboardEvent::K:
+                        m_player->take_item();
+                      return true;
 
-            default:
-                break;
-            }
-            break;
-        }
-
-        return false;
+                      default:
+                        break;
+                      }
+                    break;
+              }
+              return false;
     }
 
     void draw() {
+
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
         m_player->show_sanity();
@@ -942,23 +963,28 @@ public:
     }
 
     void update(unsigned long elapsed) {
+
         if(m_player->health() < 1) {
             m_player->you_died();
         }
 
         if(m_player->stamina() < 100) {
+
             m_player->set_stamina(m_player->stamina() + 0.05);
+
             if(m_player->stamina() > 100) {
                 m_player->set_stamina(100);
             }
         }
 
-        if(! m_player->m_sanity_loss) {
+        if(!m_player->m_sanity_loss) {
             m_player->m_sanity_loss = elapsed;
         }
 
         if(elapsed - m_player->m_sanity_loss > 3000) {
+
             m_player->set_sanity(m_player->sanity() - 1);
+
             if(m_player->sanity() < 0) {
                 m_player->set_sanity(0);
             }
@@ -966,33 +992,38 @@ public:
         }
 
         if (m_left) {
+
             m_player->set_moviment(-1.0, 0.0);
             m_player->set_direction(Player::LEFT);
         }
         else if (m_right) {
+
             m_player->set_moviment(0.0, 0.0);
             m_player->set_direction(Player::RIGHT);
         }
 
         if (m_top) {
+
             m_player->set_moviment(0.0, -1.0);
             m_player->set_direction(Player::UP);
         }
         else if (m_down){
+
             m_player->set_moviment(0.0, 1.0);
             m_player->set_direction(Player::DOWN);
         }
 
         Player::Direction dir = m_player->direction();
         int row = dir;
+
         m_animation->set_row(row);
         m_animation->update(elapsed);
     }
 
-private:
-    Player *m_player;
-    unique_ptr<Animation> m_animation;
-    int m_left, m_right, m_top, m_down;
+    private:
+          Player *m_player;
+          unique_ptr<Animation> m_animation;
+          int m_left, m_right, m_top, m_down;
 };
 
 Player::Player(Object *parent, const string& id)
@@ -1017,12 +1048,12 @@ Player::Player(Object *parent, const string& id)
 }
 
 Player::~Player() {
+
     Environment *env = Environment::get_instance();
     env->events_manager->unregister_listener(this);
 }
 
-Player::Direction
-Player::direction() const {
+Player::Direction Player::direction() const {
     return m_impl->direction();
 }
 

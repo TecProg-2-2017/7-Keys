@@ -442,103 +442,85 @@ void Room::add_corners(const string& name) {
 
             sprintf(path, "res/tile_sheets/%s%d%d.png", name.c_str(),stages, i + 1);
         }
-
         Image *image = new Image(nullptr, name, path);
-
-        if (not image)
+        
+        if (not image){
             continue;
-
+        }
         double x = i % 3 ? canvas->w() - image->w() : 0;
         double y = i/2 ? canvas->h() - image->h() : 0;
 
         delete image;
-
 	    Item *corner = new Item(this, name, path, x, y, INFINITE, false);
 	    add_child(corner);
     }
 }
 
-void
-Room::add_guard(const string& name)
-{
-
+void Room::add_guard(const string& name){
     string type = "easy";
     int random = randint(0,2);
 
-    if(random < 1)
+    if(random < 1){
         type = "easy";
-    if(random < 2)
+    }
+    if(random < 2){
         type = "normal";
-    else
+    }
+    else{
         type = "hard";
-
-
-    for(int i = 0; i < (stage_id / 3) + 1; i++)
-    {
+    }
+    for(int i = 0; i < (stage_id / 3) + 1; i++){
         Guard *guard = new Guard(this, name, 0, 0, 60, false, type, randint(0,3));
         place(guard, -1, -1);
 	    add_child(guard);
     }
 }
 
-void
-Room::add_ghost(const string& name)
-{
-
+void Room::add_ghost(const string& name){
     string type = "easy";
 
-    for(int i = 0; i < (stage_id / 3); i++)
-    {
+    for(int i = 0; i < (stage_id / 3); i++){
         Ghost *ghost = new Ghost(this, name, 0, 0, 9999, true, "normal", randint(0,3));
         place(ghost, -1, -1);
         add_child(ghost);
     }
 }
 
-bool
-Room::place(Object *object, double x, double y)
-{
+bool Room::place(Object *object, double x, double y){
     int w = center_area.w();
     int h = center_area.h();
-
     int tries = 0;
     bool ok, randomize = x < 0 and y < 0;
 
-    do {
+    do{
         ok = true;
         ++tries;
-
-        if (randomize)
-        {
+        if (randomize){
             x = (rand() % w) + center_area.x();
             y = (rand() % h) + center_area.y();
         }
-
-        if (x + object->w() > w + center_area.x())
+        if (x + object->w() > w + center_area.x()){
             x = w + center_area.x() - object->w();
-
-        if (y + object->h() > h + center_area.y())
+        }
+        if (y + object->h() > h + center_area.y()){
             y = h + center_area.y() - object->h();
-
-        for (auto obj : children())
-        {
-            if (obj->walkable())
+        }
+        for (auto obj : children()){
+            if (obj->walkable()){
                 continue;
-
+            }
             Rect a { x, y, object->w(), object->h() };
             Rect b = obj->bounding_box();
             Rect c = a.intersection(b);
-
-            if (c.w() or c.h())
-            {
+            if (c.w() or c.h()){
                 ok = false;
                 break;
             }
         }
 
-        if (tries > 10)
+        if (tries > 10){
             break;
-
+        }
     } while (not ok and randomize);
 
     object->set_position(x, y);

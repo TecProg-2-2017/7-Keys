@@ -6,7 +6,6 @@
  * Licença: LGPL. Sem copyright.
  */
 #include "7keys.h"
-
 #include <iostream>
 
 using namespace std;

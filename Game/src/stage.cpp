@@ -18,7 +18,6 @@
 #include "map.h"
 #include "player.h"
 
-
 ActionID Stage::colisionID = "colisionID()";
 ActionID Stage::summonBossID = "summonBossID()";
 

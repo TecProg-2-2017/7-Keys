@@ -1,11 +1,8 @@
 #include "ghost.h"
-
 #include "core/level.h"
 #include "core/environment.h"
 #include "core/keyboardevent.h"
-
 #include <core/animation.h>
-
 #include <iostream>
 
 using namespace std;
@@ -25,8 +22,7 @@ Ghost::Ghost(Object *parent, ObjectID id, double x, double y, int mass, bool wal
     update_vision();
 }
 
-Ghost::~Ghost()
-{
+Ghost::~Ghost() {
 }
 
 Ghost::Direction
@@ -35,36 +31,33 @@ Ghost::direction()
     return m_direction;
 }
 
-void
-Ghost::update_vision()
-{
+void Ghost::update_vision() {
 }
 
-void
-Ghost::set_direction(Direction direction)
-{
+void Ghost::set_direction(Direction direction) {
     m_direction = direction;
 }
 
-void
-Ghost::draw_self()
-{
+void Ghost::draw_self() {
     m_animation->draw(x(), y());
 }
 
-void
-Ghost::walk()
-{
+void Ghost::walk() {
     double speed = 0.6;
-    if(player_posx < this->x())
-        set_x(x() - speed);
-    else
-        set_x(x() + speed);
 
-    if(player_posy < this->y())
+    if(player_posx < this->x()) {
+        set_x(x() - speed);
+    }
+    else {
+        set_x(x() + speed);
+    }
+
+    if(player_posy < this->y()) {
         set_y(y() - speed);
-    else
+    }
+    else {
         set_y(y() + speed);
+    }
 
     if(player_posx > this->x() - 100 && player_posx < this->x() + 100 && player_posy < this->y())
         set_direction(Ghost::UP);
@@ -121,7 +114,7 @@ Ghost::update_self(unsigned long elapsed)
 
     set_x(this->x());
     set_y(this->y());
-   
+
     update_direction(elapsed);
     m_animation->update(elapsed);
     walk();

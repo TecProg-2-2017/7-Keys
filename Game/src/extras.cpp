@@ -8,9 +8,7 @@
 #include <iostream>
 using namespace std;
 
-Extras::Extras()
-    : Level("extras")
-{
+Extras::Extras() : Level("extras") {
     Environment *env = Environment::get_instance();
 
     double w = env->canvas->w();
@@ -42,13 +40,11 @@ Extras::Extras()
 
 }
 
-Extras::~Extras()
-{
+Extras::~Extras() {
 }
 
-void
-Extras::draw_self()
-{
+void Extras::draw_self() {
+
     Environment *env = Environment::get_instance();
     env->canvas->clear(Color::WHITE);
 
@@ -56,22 +52,17 @@ Extras::draw_self()
     env->canvas->draw(image.get(), 1, 0);
 }
 
-bool
-Extras::on_message(Object *object, MessageID id, Parameters)
-{
-    if (id != Button::clickedID)
-    {
+bool Extras::on_message(Object *object, MessageID id, Parameters) {
+    if (id != Button::clickedID) {
         return false;
     }
 
     Button *button = dynamic_cast <Button *>(object);
 
-    if (not button)
-    {
+    if (not button) {
         return false;
     }
-    if (button->id() == "back")
-    {
+    if (button->id() == "back") {
         set_next("title");
     }
 

@@ -1,3 +1,9 @@
+/*
+* File: weapon.cpp
+*
+* Description: Implementation of Weapon class.
+*/
+
 #include <iostream>
 #include <core/image.h>
 #include <core/keyboardevent.h>

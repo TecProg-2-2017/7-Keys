@@ -1,9 +1,7 @@
 /*
-* Implementation of TitleScreen class.
+* File: titlescreen.cpp
 *
-* Author: Edson Alves
-* Date: 29/04/2015
-* Licence: LGPL. No copyright.
+* Description: Implementation of TitleScreen class.
 */
 
 #include "titlescreen.h"

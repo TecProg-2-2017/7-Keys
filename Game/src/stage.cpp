@@ -1,7 +1,7 @@
 /*
-* Author: Edson Alves
-* Date: 20/04/2015
-* Licence: LGPL. No copyright
+* File: stage.cpp
+*
+* Description: Implementation of Stage class.
 */
 
 #include <core/environment.h>

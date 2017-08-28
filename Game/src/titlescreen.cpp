@@ -13,7 +13,7 @@
 #include <iostream>
 using namespace std;
 
-TitleScreen::TitleScreen()
+TitleScreen::TitleScreen ()
   : Level("title") {
 
   Environment *env = Environment::get_instance();
@@ -73,11 +73,11 @@ TitleScreen::TitleScreen()
   add_child(extras);
 }
 
-TitleScreen::~TitleScreen() {
+TitleScreen::~TitleScreen () {
 
 }
 
-void TitleScreen::draw_self() {
+void TitleScreen::draw_self () {
   Environment *env;
   env = Environment::get_instance();
 
@@ -89,7 +89,7 @@ void TitleScreen::draw_self() {
   env->canvas->draw(image.get(), 1, 0);
 }
 
-bool TitleScreen::on_message(Object *object, MessageID id, Parameters) {
+bool TitleScreen::on_message (Object *object, MessageID id, Parameters) {
 
   if (id != Button::clickedID) {
     return false;

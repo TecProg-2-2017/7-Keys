@@ -21,7 +21,7 @@
 ActionID Stage::colisionID = "colisionID()";
 ActionID Stage::summonBossID = "summonBossID()";
 
-Stage::Stage(ObjectID id, int lives, double * sanity)
+Stage::Stage (ObjectID id, int lives, double * sanity)
   : Level(id) {
 
   char aux[10];
@@ -72,7 +72,7 @@ Stage::Stage(ObjectID id, int lives, double * sanity)
   add_observer(m_map);
 }
 
-void Stage::update_self(unsigned long) {
+void Stage::update_self (unsigned long) {
   const list<Object*> map_filhos = m_map->children();
 
   for (auto filho : map_filhos) {
@@ -244,14 +244,14 @@ void Stage::update_self(unsigned long) {
   }
 }
 
-void Stage::draw_self() {
+void Stage::draw_self () {
   Environment *env;
 
   env = Environment::get_instance();
   env->canvas->clear(Color::BLUE);
 }
 
-bool Stage::on_message(Object *, MessageID id, Parameters p) {
+bool Stage::on_message (Object *, MessageID id, Parameters p) {
   if (id == Player::hitExitDoorID) {
     *m_sanity = m_player->sanity();
     set_next(p);

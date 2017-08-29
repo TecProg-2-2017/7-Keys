@@ -8,16 +8,16 @@
 
 // Function to draw rectangles
 
-void FillRect(int x, int y, int w, int h, int color, SDL_Surface *screen){
+void FillRect(int x, int y, int w, int h, int color, SDL_Surface *screen) {
     SDL_Rect rect = {x,y,w,h};
     SDL_FillRect(screen, &rect, color);
 }
 
-int main ( int argc, char** argv ){
+int main ( int argc, char** argv ) {
 
     // Initialize SDL video
 
-    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
         printf( "Unable to init SDL: %s\n", SDL_GetError() );
         return 1;
     }
@@ -30,7 +30,7 @@ int main ( int argc, char** argv ){
 
     SDL_Surface* screen = SDL_SetVideoMode(640, 480, 16,
                                            SDL_HWSURFACE|SDL_DOUBLEBUF);
-    if ( !screen ){
+    if ( !screen ) {
         printf("Unable to set 640x480 video: %s\n", SDL_GetError());
         return 1;
     }
@@ -52,16 +52,16 @@ int main ( int argc, char** argv ){
     // Program main loop
 
     bool done = false;
-    while (!done){
+    while (!done) {
 
         // Message processing loop
         
         SDL_Event event;
-        while (SDL_PollEvent(&event)){
+        while (SDL_PollEvent(&event)) {
             
             // Check for messages
 
-            switch (event.type){
+            switch (event.type) {
 
                 // Exit if the window is closed
 
@@ -75,7 +75,7 @@ int main ( int argc, char** argv ){
 
                      // Exit if ESCAPE is pressed
                         
-                    if (event.key.keysym.sym == SDLK_ESCAPE){
+                    if (event.key.keysym.sym == SDLK_ESCAPE) {
                         done = true;
                     }
                     break;
@@ -99,31 +99,31 @@ int main ( int argc, char** argv ){
 
         srand (time(NULL));
 
-        for(int num_salas = 15; num_salas != 0; num_salas--){
+        for(int num_salas = 15; num_salas != 0; num_salas--) {
            random = rand() % 3;
            direction = rand() % 2;
-           if (direction == 0){
+           if (direction == 0) {
                direction = 50;
            }
-           else{
+           else {
                direction = -50;
            }
-           if (random == 0){
+           if (random == 0) {
                 FillRect(x+direction,y,50,50,0xFFFFFF,screen);
                 FillRect(x+direction+1,y+1,48,48,0x0,screen);
                 x = x+direction;
            }
-           else if (random == 1){
+           else if (random == 1) {
                 FillRect(x,y+direction,50,50,0xFFFFFF,screen);
                 FillRect(x+1,y+direction+1,48,48,0x0,screen);
                 y = y+direction;
            }
-           else if (random == 2){
+           else if (random == 2) {
                 FillRect(x,y-direction,50,50,0xFFFFFF,screen);
                 FillRect(x+1,y-direction+1,48,48,0x0,screen);
                 y = y-direction;
            }
-           else if (random == 3){
+           else if (random == 3) {
                 FillRect(x-direction,y,50,50,0xFFFFFF,screen);
                 FillRect(x-direction+1,y+1,48,48,0x0,screen);
                 x = x-direction;

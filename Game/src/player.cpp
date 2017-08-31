@@ -139,13 +139,13 @@ public:
         }
 
         if(weapon_id == "Faca") {
-            Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path, \
+            Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path, 
                                         5, 60.0, 5);
             m_weapon = weapon;
         }
 
         if(weapon_id == "Cacetete") {
-            Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path,\
+            Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path,
                                         7, 33.0, 5);
             m_weapon = weapon;
         }
@@ -177,20 +177,20 @@ public:
 
     void show_health() {
         Environment *env = Environment::get_instance();
-        Rect healthbar {(double)env->canvas->w()/15, \
+        Rect healthbar {(double)env->canvas->w()/15, 
                        (double)env->canvas->h()/24, m_player->health()*2, 12};
         env->canvas->fill(healthbar, Color::RED);
-        Rect borda {(double)env->canvas->w()/15, \
+        Rect borda {(double)env->canvas->w()/15, 
                    (double)env->canvas->h()/24, 100*2, 12};
         env->canvas->draw(borda, Color::RED);
     }
 
     void show_sanity() {
         Environment *env = Environment::get_instance();
-        Rect sanitybar {(double)env->canvas->w()/15, \
+        Rect sanitybar {(double)env->canvas->w()/15, 
                        (double)env->canvas->h()/17, m_player->sanity()*2, 12};
         env->canvas->fill(sanitybar, Color::GREEN);
-        Rect borda {(double)env->canvas->w()/15, (double)env->canvas->h()/17, \
+        Rect borda {(double)env->canvas->w()/15, (double)env->canvas->h()/17, 
                     100*2, 12};
         env->canvas->draw(borda, Color::GREEN);
     }
@@ -203,10 +203,10 @@ public:
             stamina = 0;
         }
 
-        Rect staminabar {(double)env->canvas->w()/15, \
+        Rect staminabar {(double)env->canvas->w()/15, 
                         (double)env->canvas->h()/13, stamina, 12};
         env->canvas->fill(staminabar, Color::YELLOW);
-        Rect borda {(double)env->canvas->w()/15, \
+        Rect borda {(double)env->canvas->w()/15, 
                    (double)env->canvas->h()/13, 100*2, 12};
         env->canvas->draw(borda, Color::YELLOW);
     }
@@ -215,15 +215,15 @@ public:
         Environment *env = Environment::get_instance();
         double size = env->canvas->w()/35;
 
-        Rect item1 {(double)(env->canvas->w() * 1/35), \
+        Rect item1 {(double)(env->canvas->w() * 1/35), 
                     (double)env->canvas->h() * 25/30, size, size};
-        Rect item2 {(double)env->canvas->w() * 1/35 + size, \
+        Rect item2 {(double)env->canvas->w() * 1/35 + size, 
                     (double)env->canvas->h() * 25/30 - size, size, size};
-        Rect item3 {(double)env->canvas->w() * 1/35 + 2*size, \
+        Rect item3 {(double)env->canvas->w() * 1/35 + 2*size, 
                   (double)env->canvas->h() * 25/30, size, size};
-        Rect item4 {(double)env->canvas->w() * 1/35 + size, \
+        Rect item4 {(double)env->canvas->w() * 1/35 + size, 
                    (double)env->canvas->h() * 25/30 + size, size, size};
-        Rect not_item {(double)env->canvas->w() * 1/35 + size, \
+        Rect not_item {(double)env->canvas->w() * 1/35 + size, 
                        (double)env->canvas->h() * 25/30, size, size};
         env->canvas->draw(item1, Color::WHITE);
         env->canvas->draw(item2, Color::WHITE);
@@ -332,7 +332,7 @@ public:
             m_player->add_child(visao);
         }
         else if(direction() == Player::UP) {
-            Sight *visao = new Sight(m_player, "visao", \
+            Sight *visao = new Sight(m_player, "visao", 
             m_player->x() + m_player->w()/4, m_player->y() - 70, 40, 100);
             m_player->add_child(visao);
         }

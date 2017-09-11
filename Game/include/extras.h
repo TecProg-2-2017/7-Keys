@@ -5,15 +5,14 @@
 
 class Image;
 
-class Extras : public Level
-{
-public:
+class Extras : public Level {
+ public:
     Extras();
     virtual ~Extras();
 
     bool on_message(Object *sender, MessageID id, Parameters parameters);
 
-private:
+ private:
     void draw_self();
 };
 

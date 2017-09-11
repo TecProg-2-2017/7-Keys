@@ -7,6 +7,8 @@
 
 using namespace std;
 
+// Creates the Ghost character including its habilities such as sight field
+
 Ghost::Ghost(Object *parent, ObjectID id, double x, double y, int mass, bool walkable, string t, int dir)
     : Object(parent, id, x, y), type(t), m_damage(0.05), m_animation (new Animation("res/sprites/ghost_guarda1_running.png",
     	0, 0, 70, 70, 8, 60, true)), m_direction((Direction) dir), m_last(0)
@@ -26,9 +28,7 @@ Ghost::Ghost(Object *parent, ObjectID id, double x, double y, int mass, bool wal
 Ghost::~Ghost() {
 }
 
-Ghost::Direction
-Ghost::direction()
-{
+Ghost::Direction Ghost::direction() {
     return m_direction;
 }
 
@@ -42,6 +42,8 @@ void Ghost::set_direction(Direction direction) {
 void Ghost::draw_self() {
     m_animation->draw(x(), y());
 }
+
+// Sets the Ghost character walking skill according to the player's
 
 void Ghost::walk() {
 
@@ -75,6 +77,7 @@ void Ghost::walk() {
     }
 }
 
+// Sets the Ghost character position according to randomic values (disonsiders the player position)
 void Ghost::update_direction(unsigned long elapsed) {
 
     if(elapsed - m_last > 5000) {

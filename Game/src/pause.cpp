@@ -1,5 +1,4 @@
 #include "pause.h"
-
 #include <ijengine/util/button.h>
 #include <core/font.h>
 #include <core/environment.h>
@@ -7,6 +6,7 @@
 
 using namespace std;
 
+// Set buttuns interface and options menu to pause the game
 Pause::Pause() : Level("pause") {
 
     Environment *env = Environment::get_instance();
@@ -46,6 +46,7 @@ Pause::Pause() : Level("pause") {
 Pause::~Pause() {
 }
 
+//Set pause screen interface
 void Pause::draw_self() {
 
     Environment *env = Environment::get_instance();
@@ -55,6 +56,8 @@ void Pause::draw_self() {
     env->canvas->draw(image.get(), 1, 0);
 }
 
+
+// Set messages to be displayed in the game pause menu
 bool Pause::on_message(Object *object, MessageID id, Parameters) {
 
     Environment *env = Environment::get_instance();

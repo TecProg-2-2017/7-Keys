@@ -1,10 +1,7 @@
 /*
  * Player class implementation.
- *
- * Author: Edson Alves
- * Data: 15/05/2015
- * License: LGPL. No copyright.
  */
+ 
 #include "player.h"
 #include "core/rect.h"
 #include "core/level.h"

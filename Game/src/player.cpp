@@ -32,7 +32,9 @@ class Player::Impl {
 
     int m_sanity_loss;
 
-    Direction direction() const { return m_direction; }
+    Direction direction() const {
+       return m_direction;
+     }
 
     void set_direction(Direction direction) {
        m_direction = direction;

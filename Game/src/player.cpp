@@ -1,7 +1,7 @@
 /*
  * Player class implementation.
  */
- 
+
 #include "player.h"
 #include "core/rect.h"
 #include "core/level.h"
@@ -34,9 +34,13 @@ class Player::Impl {
 
     Direction direction() const { return m_direction; }
 
-    void set_direction(Direction direction) { m_direction = direction; }
+    void set_direction(Direction direction) {
+       m_direction = direction;
+     }
 
-    const pair<double, double>& moviment() const { return m_moviment; }
+    const pair<double, double>& moviment() const {
+      return m_moviment;
+     }
 
     void set_moviment(double xaxis, double yaxis) {
         m_moviment = make_pair(xaxis, yaxis);

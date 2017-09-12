@@ -1,3 +1,9 @@
+/*
++* File: guard.cpp
++*
++* Description: Implementation of Guard Class
+*/
+
 #include "guard.h"
 #include "core/level.h"
 #include "core/environment.h"
@@ -62,7 +68,6 @@ void Guard::update_vision() {
         Sight *vision = new Sight(this, "visao", this->x(), this->y() + 40, 80, 200);
         add_child(vision);
     }
-
 }
 
 void Guard::set_direction(Direction direction){

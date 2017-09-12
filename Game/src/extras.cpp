@@ -1,3 +1,9 @@
+/*
++* File: extras.cpp
++*
++* Description: Implementation of Extras Class
+*/
+
 #include "extras.h"
 
 #include <ijengine/util/button.h>
@@ -61,12 +67,14 @@ bool Extras::on_message(Object *object, MessageID id, Parameters) {
 
     if (id != Button::clickedID) {
         return false;
+        // Returns false if the Object clicked hasn't an Button ID
     }
 
     Button *button = dynamic_cast <Button *>(object);
 
     if (not button) {
         return false;
+        // Returns false if the clicked object is not a "Button"
     }
 
     if (button->id() == "back") {
@@ -76,4 +84,5 @@ bool Extras::on_message(Object *object, MessageID id, Parameters) {
     finish();
 
     return true;
+    // Returns true if the object clicked is of the "Button" type
 }

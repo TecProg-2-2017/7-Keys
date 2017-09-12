@@ -1,3 +1,9 @@
+/*
++* File: ghost.cpp
++*
++* Description: Implementation of Ghost class
+*/
+
 #include "ghost.h"
 #include "core/level.h"
 #include "core/environment.h"
@@ -44,7 +50,6 @@ void Ghost::draw_self() {
 }
 
 // Sets the Ghost character walking skill according to the player's
-
 void Ghost::walk() {
 
     double speed = 0.6;

@@ -24,13 +24,14 @@ using std::make_pair;
 class Player::Impl {
 
     public:
-          Impl(Player *player, bool key)
-          : m_sanity_loss(0), m_player(player), m_direction(Player::LEFT),
-          m_moviment(make_pair(0.0, 0.0)),
-          m_key(key), m_strength(0.0), m_health(100.0), m_sanity(100.0),
-          m_stamina(100.0), m_pill(0), m_hweapon(false), m_weapon(nullptr),
-          m_secondary(false), m_damage(50), m_life(5) {
-          }
+
+        // Player constructor method
+        Impl(Player *player, bool key)
+        : m_sanity_loss(0), m_player(player), m_direction(Player::LEFT),
+        m_moviment(make_pair(0.0, 0.0)),
+        m_key(key), m_strength(0.0), m_health(100.0), m_sanity(100.0),
+        m_stamina(100.0), m_pill(0), m_hweapon(false), m_weapon(nullptr),
+        m_secondary(false), m_damage(50), m_life(5) {}
 
     int m_sanity_loss;
 
@@ -52,6 +53,7 @@ class Player::Impl {
         m_moviment = make_pair(xaxis, yaxis);
     }
 
+    //Set current position of the player
     void set_current(string nova, int posx, int posy) {
 
         m_player->set_x(posx);
@@ -100,9 +102,12 @@ class Player::Impl {
         return m_damage;
     }
 
+    // Player get a pill item
     void get_pill(string id) {
 
         const list<Object *> items = m_player->children();
+
+        // If there is any Pill on player list of items, remove it
         for (auto item : items) {
             if(strstr(item->id().c_str(), "Pill")) {
                 m_player->remove_child(item);
@@ -119,18 +124,26 @@ class Player::Impl {
             m_pill = 2;
         }
 
+        // Next 5 lines adds pill icon to the player inventory
         char path[256];
         sprintf(path, "res/items/thumb.%s.png", id.c_str());
         double x_axis = (double)env->canvas->w() * 1/35 + 2;
         double y_axis = (double)env->canvas->h() * 25/30 + 2;
-
         Item* pill = new Item(m_player, "icon_pill", path, x_axis, y_axis,
                      9999, true);
+
+        //Add the pill to the player items
         m_player->add_child(pill);
     }
 
+<<<<<<< HEAD
 // Selecting weapon type
+=======
+    // Player get a weapon
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void get_weapon(string weapon_id) {
+
+        // If the player already have a weapon, exit the method
         if(m_hweapon == true) {
             return;
         }
@@ -140,6 +153,7 @@ class Player::Impl {
 
         m_hweapon = true;
 
+        // Next 6 lines adds weapon icon to the player inventory
         char weapon_path[256];
         sprintf(weapon_path, "res/items/thumb.%s.png", weapon_id.c_str());
         double x_axis = (double)env->canvas->w() * 1/35 + 2 + (2*size);
@@ -168,13 +182,18 @@ class Player::Impl {
         }
     }
 
+<<<<<<< HEAD
 // Player captures a key
+=======
+    // Player get a key
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void get_key() {
 
         if(m_key == true) {
             return;
         }
 
+        // Next 7 lines adds key icon to the player inventory
         Environment *env = Environment::get_instance();
         double size = env->canvas->w()/35;
 
@@ -194,10 +213,13 @@ class Player::Impl {
         return m_key;
     }
 
+<<<<<<< HEAD
 // Show the player property health
 Player captures a key
+=======
+    // Show player healthbar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_health() {
-
         Environment *env = Environment::get_instance();
         Rect healthbar {(double)env->canvas->w()/15,
                        (double)env->canvas->h()/24, m_player->health()*2, 12};
@@ -207,7 +229,11 @@ Player captures a key
         env->canvas->draw(borda, Color::RED);
     }
 
+<<<<<<< HEAD
 // Show the player property sanity
+=======
+    // Show player sanity bar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_sanity() {
         Environment *env = Environment::get_instance();
         Rect sanitybar {(double)env->canvas->w()/15,
@@ -218,7 +244,11 @@ Player captures a key
         env->canvas->draw(borda, Color::GREEN);
     }
 
+<<<<<<< HEAD
 // Show the player property stamina
+=======
+    // Show player stamina bar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_stamina() {
 
         Environment *env = Environment::get_instance();
@@ -236,8 +266,8 @@ Player captures a key
         env->canvas->draw(borda, Color::YELLOW);
     }
 
+    // Show player inventory
     void show_inventory() {
-
         Environment *env = Environment::get_instance();
         double size = env->canvas->w()/35;
 
@@ -258,9 +288,14 @@ Player captures a key
         env->canvas->fill(not_item, Color::WHITE);
     }
 
+<<<<<<< HEAD
 // Allow the player to use a pill to regain health or sanity
+=======
+    // Player uses pill
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void use_pill() {
 
+        // Pill of health
         if(m_pill == 1) {
             double recover = 35;
             m_player->set_health(m_player->health() + recover);
@@ -279,7 +314,9 @@ Player captures a key
                     m_player->remove_child(item);
                 }
             }
-        }
+        }// End of pill of health
+
+        // Pill of sanity
         else if(m_pill == 2) {
             double recover = 35;
             m_player->set_sanity(m_player->sanity() + recover);
@@ -296,7 +333,7 @@ Player captures a key
                     m_player->remove_child(item);
                 }
             }
-        }
+        }// End of pill of sanity
     }
 
 //  Notify that player use a weapon
@@ -328,6 +365,7 @@ Player captures a key
         m_player->notify(repeatLevelID, "you_died");
     }
 
+    // Player hits enemies
     void hit() {
 
         char message[256];
@@ -352,14 +390,12 @@ Player captures a key
         }
 
         if(direction() == Player::RIGHT) {
-
-          Sight *visao = new Sight(m_player, "visao", x_axis, y_axis, 100, 40);
+            Sight *visao = new Sight(m_player, "visao", x_axis, y_axis, 100, 40);
             double x_axis = m_player->x()+40;
             double y_axis = m_player->y() + m_player->h()/4;
             m_ x_axis,ayer->add_child(visao);
         }
         else if(direction() == Player::LEFT) {
-
             double x_axis = m_player->x() - 70;
             double y_axis = m_player->y() + m_player->h()/4;
             Sight *visao = new Sight(m_player, "visao", x_axis, y_axis, 100, 40);
@@ -371,9 +407,8 @@ Player captures a key
             m_player->add_child(visao);
         }
         else if(direction() == Player::DOWN) {
-
-          double x_axis = m_player->x()+ m_player->w()/4;
-          double y_axis = m_player->y() + 40;
+            double x_axis = m_player->x()+ m_player->w()/4;
+            double y_axis = m_player->y() + 40;
             Sight *visao = new Sight(m_player, "visao", x_axis, y_axis , 40, 100);
             m_player->add_child(visao);
         }
@@ -411,6 +446,8 @@ private:
 
 class Idle : public SpriteState {
   public:
+
+        // Sprite constructor
         Idle(Player *player)
         : m_player(player), m_animation(new Animation("res/sprites/idle.png",
             0, 0, 70, 70, 2, 1000, true)), m_left(0), m_right(0), m_top(0),
@@ -420,8 +457,8 @@ class Idle : public SpriteState {
     ~Idle() {
     }
 
+    // Player enter the scenario
     void enter(int) {
-
         m_player->set_dimensions(m_animation->w(), m_animation->h());
         m_right = m_left = m_down = m_top = 0;
     }
@@ -429,106 +466,113 @@ class Idle : public SpriteState {
     void leave(int) {
     }
 
+    // Handles player interation with the keyboard
     bool on_event(const KeyboardEvent& event) {
 
+        // Start of switch to determinate keyboard event behavior
         switch (event.state()) {
-          case KeyboardEvent::PRESSED:
-              switch (event.key()) {
-                case KeyboardEvent::LEFT:
-                case KeyboardEvent::A:
-                    m_left = 1;
-                  return true;
 
-            case KeyboardEvent::RIGHT:
-              case KeyboardEvent::D:
-                    m_right = 1;
-                  return true;
+            //Start of Case KeyboardEvent::PRESSED
+            case KeyboardEvent::PRESSED:
+                switch (event.key()) {
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                        m_left = 1;
+                        return true;
 
-                  case KeyboardEvent::UP:
-                  case KeyboardEvent::W:
-                    m_top = 1;
-                  return true;
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                        m_right = 1;
+                        return true;
 
-                  case KeyboardEvent::DOWN:
-                  case KeyboardEvent::S:
-                    m_down = 1;
-                  return true;
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                        m_top = 1;
+                        return true;
 
-                  case KeyboardEvent::L:
-                    m_running = true;
-                  return true;
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                        m_down = 1;
+                        return true;
 
-                  case KeyboardEvent::Q:
-                    m_player->use_pill();
-                  return true;
+                    case KeyboardEvent::L:
+                        m_running = true;
+                        return true;
 
-                  case KeyboardEvent::E:
-                    m_player->open_door();
-                  return true;
+                    case KeyboardEvent::Q:
+                        m_player->use_pill();
+                        return true;
 
-                  case KeyboardEvent::K:
-                    m_player->take_item();
-                  return true;
+                    case KeyboardEvent::E:
+                        m_player->open_door();
+                        return true;
 
-                  case KeyboardEvent::C:
-                    m_player->report_event(Player::DUCKING);
-                  return true;
-
-                  case KeyboardEvent::J:
-                    m_player->hit();
-                  return true;
-
-            default:
-                break;
-            }
-
-            break;
-
-                  case KeyboardEvent::RELEASED:
-                  switch (event.key()) {
-                      case KeyboardEvent::LEFT:
-                      case KeyboardEvent::A:
-                        m_left = 0;
-                      return true;
-
-                      case KeyboardEvent::RIGHT:
-                      case KeyboardEvent::D:
-                        m_right = 0;
-                      return true;
-
-                      case KeyboardEvent::UP:
-                      case KeyboardEvent::W:
-                        m_top = 0;
-                      return true;
-
-                      case KeyboardEvent::DOWN:
-                      case KeyboardEvent::S:
-                        m_down = 0;
-                      return true;
-
-                      case KeyboardEvent::L:
-                        m_running = false;
-                      return true;
-
-                      case KeyboardEvent::P:
-                        m_player->jump_level();
-                      return true;
-
-                      case KeyboardEvent::K:
+                    case KeyboardEvent::K:
                         m_player->take_item();
-                      return true;
+                        return true;
 
-                      default:
+                    case KeyboardEvent::C:
+                        m_player->report_event(Player::DUCKING);
+                        return true;
+
+                    case KeyboardEvent::J:
+                        m_player->hit();
+                        return true;
+
+                    default:
                         break;
-                    }
-                    break;
                 }
+                break;
 
+            // End of case KeyboardEvent::PRESSED
+
+            // Start of case KeyboardEvent::RELEASED
+            case KeyboardEvent::RELEASED:
+                switch (event.key()) {
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                        m_left = 0;
+                        return true;
+
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                        m_right = 0;
+                        return true;
+
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                        m_top = 0;
+                        return true;
+
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                        m_down = 0;
+                        return true;
+
+                    case KeyboardEvent::L:
+                        m_running = false;
+                        return true;
+
+                    case KeyboardEvent::P:
+                        m_player->jump_level();
+                        return true;
+
+                    case KeyboardEvent::K:
+                        m_player->take_item();
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+            // End of case KeyboardEvent::RELEASED
+
+        } // End of switch to determinate keyboard event behavior
         return false;
     }
 
+    // Draw player char, health bar, sanity bar, inventory and stamina bar
     void draw() {
-
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
         m_player->show_sanity();
@@ -536,8 +580,9 @@ class Idle : public SpriteState {
         m_player->show_stamina();
     }
 
+    // Update player life status, stamina bar, sanity bar,
+    // and moviment direction
     void update(unsigned long elapsed) {
-
         if(m_player->health() < 1) {
             m_player->you_died();
         }
@@ -548,7 +593,6 @@ class Idle : public SpriteState {
                 m_player->set_stamina(100);
             }
         }
-
 
         if(!m_player->m_sanity_loss) {
             m_player->m_sanity_loss = elapsed;
@@ -563,26 +607,24 @@ class Idle : public SpriteState {
         }
 
         if (m_left) {
-
             m_player->set_moviment(-1.0, 0.0);
             m_player->set_direction(Player::LEFT);
             m_player->report_event(Player::MOVED);
         }
-        else if (m_right){
 
+        else if (m_right){
             m_player->set_moviment(0.0, 0.0);
             m_player->set_direction(Player::RIGHT);
             m_player->report_event(Player::MOVED);
         }
 
         if (m_top) {
-
             m_player->set_moviment(0.0, -1.0);
             m_player->set_direction(Player::UP);
             m_player->report_event(Player::MOVED);
         }
-        else if (m_down) {
 
+        else if (m_down) {
             m_player->set_moviment(0.0, 1.0);
             m_player->set_direction(Player::DOWN);
             m_player->report_event(Player::MOVED);
@@ -602,9 +644,12 @@ private:
     bool m_running;
 };
 
+// Definition of running player class
 class Running : public SpriteState {
 
 public:
+
+    // Running player sprite constructor
     Running(Player *player, bool key)
         : m_player(player), m_animation(
         new Animation("res/sprites/running.png", 0, 0, 70, 70, 8, 60, true)),
@@ -617,8 +662,8 @@ public:
 
     const double m_speed = 250.0;
 
+    // Running player enter the scenario
     void enter(int from) {
-
         m_player->set_dimensions(m_animation->w(), m_animation->h());
 
         Player::Direction dir = m_player->direction();
@@ -631,7 +676,6 @@ public:
         m_running = 0;
 
         if (from == Player::IDLE) {
-
             auto moviment = m_player->moviment();
             double x = moviment.first * m_speed;
             double y = moviment.second * m_speed;
@@ -642,8 +686,9 @@ public:
     void leave(int) {
     }
 
+    // Draw running player char, health bar, stamina bar, sanity bar
+    // and inventory
     void draw() {
-
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
         m_player->show_sanity();
@@ -651,100 +696,109 @@ public:
         m_player->show_stamina();
     }
 
+    // Handles running player interation with the keyboard
     bool on_event(const KeyboardEvent& event) {
 
+        // Start of switch to determinate keyboard event behavior
         switch (event.state()) {
+
+            //Start of Case KeyboardEvent::PRESSED
             case KeyboardEvent::PRESSED:
                 switch (event.key()) {
-                  case KeyboardEvent::LEFT:
-                  case KeyboardEvent::A:
-                    m_left = 1;
-                  return true;
-
-                  case KeyboardEvent::RIGHT:
-                  case KeyboardEvent::D:
-                    m_right = 1;
-                  return true;
-
-                  case KeyboardEvent::UP:
-                  case KeyboardEvent::W:
-                    m_top = 1;
-                  return true;
-
-                  case KeyboardEvent::DOWN:
-                  case KeyboardEvent::S:
-                    m_down = 1;
-                  return true;
-
-                  case KeyboardEvent::L:
-                    m_running = true;
-                  return true;
-
-                  case KeyboardEvent::Q:
-                    m_player->use_pill();
-                  return true;
-
-                  case KeyboardEvent::K:
-                    m_player->take_item();
-                    m_pushing = true;
-                  return true;
-
-                  case KeyboardEvent::E:
-                    m_player->open_door();
-                  return true;
-
-                  case KeyboardEvent::C:
-                    m_player->report_event(Player::DUCKING);
-                  return true;
-
-                  case KeyboardEvent::J:
-                    m_player->hit();
-                  return true;
-
-                  default:
-                    break;
-                  }
-                break;
-
-                case KeyboardEvent::RELEASED:
-                  switch (event.key()) {
                     case KeyboardEvent::LEFT:
                     case KeyboardEvent::A:
-                      m_left = 0;
-                    return true;
+                        m_left = 1;
+                        return true;
 
                     case KeyboardEvent::RIGHT:
                     case KeyboardEvent::D:
-                      m_right = 0;
-                    return true;
+                        m_right = 1;
+                        return true;
 
                     case KeyboardEvent::UP:
                     case KeyboardEvent::W:
-                      m_top = 0;
-                    return true;
+                        m_top = 1;
+                        return true;
 
                     case KeyboardEvent::DOWN:
                     case KeyboardEvent::S:
-                      m_down = 0;
-                    return true;
+                        m_down = 1;
+                        return true;
 
                     case KeyboardEvent::L:
-                      m_running = false;
-                    return true;
+                        m_running = true;
+                        return true;
+
+                    case KeyboardEvent::Q:
+                        m_player->use_pill();
+                        return true;
 
                     case KeyboardEvent::K:
-                      m_pushing = false;
-                    return true;
+                        m_player->take_item();
+                        m_pushing = true;
+                        return true;
+
+                    case KeyboardEvent::E:
+                        m_player->open_door();
+                        return true;
+
+                    case KeyboardEvent::C:
+                        m_player->report_event(Player::DUCKING);
+                        return true;
+
+                    case KeyboardEvent::J:
+                        m_player->hit();
+                        return true;
 
                     default:
-                      break;
-                    }
-                  break;
-        }
+                        break;
+                }
+                break;
+            // End of Case KeyboardEvent::PRESSED
 
+            // Start of Case KeyboardEvento::RELEASED
+            case KeyboardEvent::RELEASED:
+                switch (event.key()) {
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                        m_left = 0;
+                        return true;
+
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                        m_right = 0;
+                        return true;
+
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                        m_top = 0;
+                        return true;
+
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                        m_down = 0;
+                        return true;
+
+                    case KeyboardEvent::L:
+                        m_running = false;
+                        return true;
+
+                    case KeyboardEvent::K:
+                        m_pushing = false;
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+            // End of Case KeyboardEvento::RELEASED
+
+        } // End of switch to determinate keyboard event behavior
         return false;
     }
 
+    // Update player life status, stamina bar, sanity bar,
+    // and moviment direction
     void update(unsigned long elapsed) {
 
         double speed = m_speed;
@@ -761,10 +815,9 @@ public:
             }
         }
 
+        // If player is running drain his stamina bar
         if(m_running) {
-
             if(m_player->stamina() > 1) {
-
                 speed += 50 + 10 * ((int)m_player->stamina())/5;
                 m_player->set_stamina(m_player->stamina() - 0.25);
 
@@ -783,7 +836,6 @@ public:
         }
 
         if(elapsed - m_player->m_sanity_loss > 3000) {
-
             m_player->set_sanity(m_player->sanity() - 1);
             if(m_player->sanity() < 0)
                 m_player->set_sanity(0);
@@ -791,22 +843,21 @@ public:
         }
 
         if (m_left) {
-
             m_player->set_direction(Player::LEFT);
             m_player->report_event(Player::MOVED);
         }
-        else if (m_right) {
 
+        else if (m_right) {
             m_player->set_direction(Player::RIGHT);
             m_player->report_event(Player::MOVED);
         }
-        if (m_top) {
 
+        if (m_top) {
             m_player->set_direction(Player::UP);
             m_player->report_event(Player::MOVED);
         }
-        else if (m_down) {
 
+        else if (m_down) {
             m_player->set_direction(Player::DOWN);
             m_player->report_event(Player::MOVED);
         }
@@ -814,6 +865,7 @@ public:
         if(!m_top && !m_down && !m_right && !m_left) {
             m_player->report_event(Player::STOPPED);
         }
+
         else {
             m_player->set_moviment(speed*(m_right - m_left), speed*(m_down - m_top));
         }
@@ -866,8 +918,11 @@ public:
         bool m_key, m_running, m_pushing;
 };
 
+// Definition of duck player class
 class Duck : public SpriteState {
     public:
+
+        // Duck player sprite constructor
         Duck(Player *player)
           : m_player(player), m_animation(new Animation("res/sprites/duck.png",
             0, 0, 70, 70, 2, 1000, true)), m_left(0), m_right(0), m_top(0),
@@ -877,8 +932,8 @@ class Duck : public SpriteState {
     ~Duck() {
     }
 
+    //Duck player enters the scenario
     void enter(int) {
-
         m_player->set_dimensions(m_animation->w(), m_animation->h());
         m_right = m_left = m_down = m_top = 0;
     }
@@ -886,96 +941,105 @@ class Duck : public SpriteState {
     void leave(int) {
     }
 
+    // Handles duck player interation with the keyboard
     bool on_event(const KeyboardEvent& event) {
 
+        // Start of switch to determinate keyboard event behavior
         switch (event.state()) {
-          case KeyboardEvent::PRESSED:
+
+            // Start of case KeyboardEvent::PRESSED
+            case KeyboardEvent::PRESSED:
                 switch (event.key()) {
-                  case KeyboardEvent::LEFT:
-                  case KeyboardEvent::A:
-                    m_left = 1;
-                  return true;
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                        m_left = 1;
+                        return true;
 
-                  case KeyboardEvent::RIGHT:
-                  case KeyboardEvent::D:
-                    m_right = 1;
-                  return true;
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                        m_right = 1;
+                        return true;
 
-                  case KeyboardEvent::UP:
-                  case KeyboardEvent::W:
-                    m_top = 1;
-                  return true;
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                        m_top = 1;
+                        return true;
 
-                  case KeyboardEvent::DOWN:
-                  case KeyboardEvent::S:
-                    m_down = 1;
-                  return true;
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                        m_down = 1;
+                        return true;
 
-                  case KeyboardEvent::Q:
-                    m_player->use_pill();
-                  return true;
+                    case KeyboardEvent::Q:
+                        m_player->use_pill();
+                        return true;
 
-                  case KeyboardEvent::E:
-                    m_player->open_door();
-                  return true;
+                    case KeyboardEvent::E:
+                        m_player->open_door();
+                        return true;
 
-                  case KeyboardEvent::K:
-                    m_player->take_item();
-                  return true;
-
-                  case KeyboardEvent::C:
-                    m_player->report_event(Player::STANDING);
-                  return true;
-
-                  case KeyboardEvent::J:
-                    m_player->hit();
-                  return true;
-
-                  default:
-                    break;
-                  }
-                break;
-
-                case KeyboardEvent::RELEASED:
-                    switch (event.key()) {
-                      case KeyboardEvent::LEFT:
-                      case KeyboardEvent::A:
-                        m_left = 0;
-                      return true;
-
-                      case KeyboardEvent::RIGHT:
-                      case KeyboardEvent::D:
-                        m_right = 0;
-                      return true;
-
-                      case KeyboardEvent::UP:
-                      case KeyboardEvent::W:
-                        m_top = 0;
-                      return true;
-
-                      case KeyboardEvent::DOWN:
-                      case KeyboardEvent::S:
-                        m_down = 0;
-                      return true;
-
-                      case KeyboardEvent::O:
-                        m_player->jump_level();
-                      return true;
-
-                      case KeyboardEvent::K:
+                    case KeyboardEvent::K:
                         m_player->take_item();
-                      return true;
+                        return true;
 
-                      default:
+                    case KeyboardEvent::C:
+                        m_player->report_event(Player::STANDING);
+                        return true;
+
+                    case KeyboardEvent::J:
+                        m_player->hit();
+                        return true;
+
+                    default:
                         break;
-                      }
-                    break;
-              }
-              return false;
+                }
+                break;
+            // End of case KeyboardEvent::PRESSED
+
+            // Start of case KeyboardEvent::RELEASED
+            case KeyboardEvent::RELEASED:
+                switch (event.key()) {
+                    case KeyboardEvent::LEFT:
+                    case KeyboardEvent::A:
+                        m_left = 0;
+                        return true;
+
+                    case KeyboardEvent::RIGHT:
+                    case KeyboardEvent::D:
+                        m_right = 0;
+                        return true;
+
+                    case KeyboardEvent::UP:
+                    case KeyboardEvent::W:
+                        m_top = 0;
+                        return true;
+
+                    case KeyboardEvent::DOWN:
+                    case KeyboardEvent::S:
+                        m_down = 0;
+                        return true;
+
+                    case KeyboardEvent::O:
+                        m_player->jump_level();
+                        return true;
+
+                    case KeyboardEvent::K:
+                        m_player->take_item();
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+            // End of case KeyboardEvent::RELEASED
+
+        }// End of switch to determinate keyboard evento behavior
+        return false;
     }
 
+    // Draw duck player char, health bar, stamina bar, sanity bar
+    // and inventory
     void draw() {
-
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
         m_player->show_sanity();
@@ -983,16 +1047,15 @@ class Duck : public SpriteState {
         m_player->show_stamina();
     }
 
+    // Update player life status, stamina bar, sanity bar,
+    // and moviment direction
     void update(unsigned long elapsed) {
-
         if(m_player->health() < 1) {
             m_player->you_died();
         }
 
         if(m_player->stamina() < 100) {
-
             m_player->set_stamina(m_player->stamina() + 0.05);
-
             if(m_player->stamina() > 100) {
                 m_player->set_stamina(100);
             }
@@ -1003,9 +1066,7 @@ class Duck : public SpriteState {
         }
 
         if(elapsed - m_player->m_sanity_loss > 3000) {
-
             m_player->set_sanity(m_player->sanity() - 1);
-
             if(m_player->sanity() < 0) {
                 m_player->set_sanity(0);
             }
@@ -1013,23 +1074,21 @@ class Duck : public SpriteState {
         }
 
         if (m_left) {
-
             m_player->set_moviment(-1.0, 0.0);
             m_player->set_direction(Player::LEFT);
         }
-        else if (m_right) {
 
+        else if (m_right) {
             m_player->set_moviment(0.0, 0.0);
             m_player->set_direction(Player::RIGHT);
         }
 
         if (m_top) {
-
             m_player->set_moviment(0.0, -1.0);
             m_player->set_direction(Player::UP);
         }
-        else if (m_down){
 
+        else if (m_down){
             m_player->set_moviment(0.0, 1.0);
             m_player->set_direction(Player::DOWN);
         }
@@ -1047,15 +1106,18 @@ class Duck : public SpriteState {
           int m_left, m_right, m_top, m_down;
 };
 
+// Player object and sprite constructor
 Player::Player(Object *parent, const string& id)
     : Sprite(parent, id), m_sanity_loss(0),
      m_impl(new Player::Impl(this, m_key)), m_key(false), m_pill(0),
      m_hweapon(false), m_secondary(false),m_damage(50) {
 
+    // Add state to the player object
     add_state(IDLE, new Idle(this));
     add_state(RUNNING, new Running(this, m_key));
     add_state(DUCK, new Duck(this));
 
+    // Add transition of states do the player object
     add_transition(MOVED, IDLE, RUNNING);
     add_transition(STOPPED, RUNNING, IDLE);
     add_transition(DUCKING, IDLE, DUCK);
@@ -1069,7 +1131,6 @@ Player::Player(Object *parent, const string& id)
 }
 
 Player::~Player() {
-
     Environment *env = Environment::get_instance();
     env->events_manager->unregister_listener(this);
 }

@@ -7,9 +7,8 @@
 
 using namespace std;
 
-class Guard : public Object
-{
-public:
+class Guard : public Object {
+ public:
 
     typedef enum { NONE, IDLE, RUNNING } State;
     typedef enum { MOVED, STOPPED } Event;
@@ -20,7 +19,7 @@ public:
 
     static ActionID removeGuardID;
     static ActionID walkID;
-    
+
 
     Direction direction();
     void get_playerx(int pos_x);
@@ -30,7 +29,7 @@ public:
     void walk(unsigned long elapsed);
     void update_direction(unsigned long elapsed);
     void change_animation(string path);
-    
+
     string type();
     string old_type();
     void set_type(string t);
@@ -41,7 +40,7 @@ public:
     void receive_dmg(double dmg);
     string m_old_type;
 
-private:
+ private:
     string m_type;
 
     int player_posx;
@@ -55,6 +54,5 @@ private:
     Direction m_direction;
     unsigned long m_last;
 };
-
 
 #endif

@@ -6,11 +6,10 @@
 
 using namespace std;
 
-class Ghost : public Object
-{
-public:
+class Ghost : public Object {
+	public:
 
-	typedef enum { NONE, IDLE, RUNNING } State;
+		typedef enum { NONE, IDLE, RUNNING } State;
     typedef enum { MOVED, STOPPED } Event;
     typedef enum { LEFT = 0, UP = 1, RIGHT = 2, DOWN = 3 } Direction;
 
@@ -28,7 +27,7 @@ public:
 
     double damage();
 
-private:
+	private:
     string type;
     int player_posx;
     int player_posy;
@@ -40,6 +39,5 @@ private:
     Direction m_direction;
     unsigned long m_last = 0;
 };
-
 
 #endif

@@ -1,3 +1,9 @@
+/*
++* File: ghost.cpp
++*
++* Description: Implementation of Ghost class
+*/
+
 #include "ghost.h"
 #include "core/level.h"
 #include "core/environment.h"
@@ -6,6 +12,8 @@
 #include <iostream>
 
 using namespace std;
+
+// Creates the Ghost character including its habilities such as sight field
 
 Ghost::Ghost(Object *parent, ObjectID id, double x, double y, int mass, bool walkable, string t, int dir)
     : Object(parent, id, x, y), type(t), m_damage(0.05), m_animation (new Animation("res/sprites/ghost_guarda1_running.png",
@@ -26,9 +34,7 @@ Ghost::Ghost(Object *parent, ObjectID id, double x, double y, int mass, bool wal
 Ghost::~Ghost() {
 }
 
-Ghost::Direction
-Ghost::direction()
-{
+Ghost::Direction Ghost::direction() {
     return m_direction;
 }
 
@@ -43,6 +49,7 @@ void Ghost::draw_self() {
     m_animation->draw(x(), y());
 }
 
+// Sets the Ghost character walking skill according to the player's
 void Ghost::walk() {
 
     double speed = 0.6;
@@ -75,6 +82,7 @@ void Ghost::walk() {
     }
 }
 
+// Sets the Ghost character position according to randomic values (disonsiders the player position)
 void Ghost::update_direction(unsigned long elapsed) {
 
     if(elapsed - m_last > 5000) {

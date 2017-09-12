@@ -1,15 +1,15 @@
 /*
- * Teste elementar das funcionalidades da biblioteca.
+ * File: main.cpp
  *
- * Autor: Edson Alves
- * Data: 26/03/2015
- * Licença: LGPL. Sem copyright.
+ * Description: Elementary testing of library functionalities.
  */
+
 #include "7keys.h"
 #include <iostream>
 
 using namespace std;
 
+// Method that runs the aplication
 int main(int, char *[]) {
 
     try {

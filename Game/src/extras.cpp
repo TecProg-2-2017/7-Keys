@@ -1,12 +1,19 @@
+/*
++* File: extras.cpp
++*
++* Description: Implementation of Extras Class
+*/
+
 #include "extras.h"
 
 #include <ijengine/util/button.h>
 #include <core/font.h>
 #include <core/environment.h>
-//#include <smpeg/smpeg.h>
 
 #include <iostream>
 using namespace std;
+
+// Creates the entire Extras main screen, including buttons and such
 
 Extras::Extras() : Level("extras") {
     Environment *env = Environment::get_instance();
@@ -45,7 +52,7 @@ Extras::Extras() : Level("extras") {
 
 Extras::~Extras() {
 }
-
+// Loads the game ending image
 void Extras::draw_self() {
 
     Environment *env = Environment::get_instance();
@@ -55,16 +62,19 @@ void Extras::draw_self() {
     env->canvas->draw(image.get(), 1, 0);
 }
 
+// Defines which was the button clicked on the extras screen
 bool Extras::on_message(Object *object, MessageID id, Parameters) {
 
     if (id != Button::clickedID) {
         return false;
+        // Returns false if the Object clicked hasn't an Button ID
     }
 
     Button *button = dynamic_cast <Button *>(object);
 
     if (not button) {
         return false;
+        // Returns false if the clicked object is not a "Button"
     }
 
     if (button->id() == "back") {
@@ -74,4 +84,5 @@ bool Extras::on_message(Object *object, MessageID id, Parameters) {
     finish();
 
     return true;
+    // Returns true if the object clicked is of the "Button" type
 }

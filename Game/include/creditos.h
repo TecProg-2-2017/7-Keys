@@ -5,15 +5,14 @@
 
 class Image;
 
-class Creditos : public Level
-{
-public:
+class Creditos : public Level {
+ public:
     Creditos();
     virtual ~Creditos();
 
     bool on_message(Object *sender, MessageID id, Parameters parameters);
 
-private:
+ private:
     void draw_self();
 };
 

@@ -1,3 +1,9 @@
+/*
++* File: guard.cpp
++*
++* Description: Implementation of Guard Class
+*/
+
 #include "guard.h"
 #include "core/level.h"
 #include "core/environment.h"
@@ -9,11 +15,12 @@ ActionID Guard::walkID { "walkID()" };
 
 using namespace std;
 
-Guard::Guard(Object *parent, ObjectID id, double x, double y, int mass, 
-             bool walkable, string t, int dir): 
+// Creates the Guard character including its habilities such as sight field
+Guard::Guard(Object *parent, ObjectID id, double x, double y, int mass,
+             bool walkable, string t, int dir):
     Object(parent, id, x, y), m_type(t), m_damage(0.7), m_health(100),
     m_animation (new Animation("res/sprites/guarda1_running.png",
-                 0, 0, 70, 70, 8, 120, true)), 
+                 0, 0, 70, 70, 8, 120, true)),
     m_direction((Direction) dir), m_last(0){
     this->set_mass(mass);
     this->set_w(70);
@@ -23,19 +30,20 @@ Guard::Guard(Object *parent, ObjectID id, double x, double y, int mass,
 
     update_vision();
 
-    if(m_type == "hard"){
+    if(m_type == "hard") {
         change_animation("res/sprites/guarda3_running.png");
     }
 }
 
-Guard::~Guard(){}
+Guard::~Guard(){
+}
 
-Guard::Direction
-Guard::direction(){
+Guard::Direction Guard::direction() {
     return m_direction;
 }
 
-void Guard::update_vision(){
+// Sets the Guard character vision field skill according to some value
+void Guard::update_vision() {
     const list<Object *> children = this->children();
 
     for (auto child : children){
@@ -43,6 +51,7 @@ void Guard::update_vision(){
             remove_child(child);
         }
     }
+
     if(direction() == Guard::RIGHT){
         Sight *vision = new Sight(this, "visao", this->x()+40, this->y(), 200, 80);
         add_child(vision);
@@ -59,7 +68,6 @@ void Guard::update_vision(){
         Sight *vision = new Sight(this, "visao", this->x(), this->y() + 40, 80, 200);
         add_child(vision);
     }
-
 }
 
 void Guard::set_direction(Direction direction){
@@ -70,88 +78,90 @@ void Guard::draw_self(){
     m_animation->draw(x(), y());
 }
 
-void Guard::walk(unsigned long elapsed){
+// Sets the Guard character walking skill according to Difficulty levels and randomic values
+void Guard::walk(unsigned long elapsed) {
     double speed = 1;
 
-    if(m_type == "easy"){
+    if(m_type == "easy") {
         return;
     }
-    else if(m_type == "normal" || m_type == "hard"){
+    else if(m_type == "normal" || m_type == "hard") {
         Environment *env = Environment::get_instance();
 
         if(elapsed - m_last > 3000){
-            if(direction() == Guard::RIGHT || direction() == Guard::LEFT){
+            if(direction() == Guard::RIGHT || direction() == Guard::LEFT) {
                 set_x(x() - speed + (speed * direction()));
-                if(x() < 0 + 80){
+                if(x() < 0 + 80) {
                     set_x(80);
                 }
-                else if(x() > env->canvas->w() - this->w() - 80){
+                else if(x() > env->canvas->w() - this->w() - 80) {
                     set_x(env->canvas->w() - this->w() - 80);
                 }
             }
-            if(direction() == Guard::UP || direction() == Guard::DOWN){
+            if(direction() == Guard::UP || direction() == Guard::DOWN) {
                 set_y(y() - 2 * speed + (speed * direction()));
                 if(y() < 0 + 80){
                     set_y(80);
                 }
-                else if(y() > env->canvas->h() - this->h() - 80){
+                else if(y() > env->canvas->h() - this->h() - 80) {
                     set_y(env->canvas->h() - this->h() - 80);
                 }
             }
         }
     }
-    else if(m_type == "follow"){
+    else if(m_type == "follow") {
         if(player_posx + 70 < this->x()){
             set_x(x() - speed);
         }
         else if(player_posx > this->x() + 70){
             set_x(x() + speed);
         }
-        if(player_posy + 70 < this->y()){
+        if(player_posy + 70 < this->y()) {
             set_y(y() - speed);
         }
-        else if(player_posy > this->y() + 70){
+        else if(player_posy > this->y() + 70) {
             set_y(y() + speed);
         }
 
-        if(player_posx > this->x() - 100 && player_posx < this->x() + 100 && player_posy < this->y()){
+        if(player_posx > this->x() - 100 && player_posx < this->x() + 100 && player_posy < this->y()) {
             set_direction(Guard::UP);
         }
-        else if(player_posx > this->x() - 100 && player_posx < this->x() + 100 && player_posy > this->y()){
+        else if(player_posx > this->x() - 100 && player_posx < this->x() + 100 && player_posy > this->y()) {
             set_direction(Guard::DOWN);
         }
-        else if(player_posx < this->x()){
+        else if(player_posx < this->x()) {
             set_direction(Guard::LEFT);
         }
-        else{
+        else {
             set_direction(Guard::RIGHT);
         }
     }
     return;
 }
 
-void Guard::update_direction(unsigned long elapsed){
-    if(m_type == "easy"){
-        if(elapsed - m_last > 1000){
+// Updates the Guard character direction according to an previously set difficulty level
+void Guard::update_direction(unsigned long elapsed) {
+    if(m_type == "easy") {
+        if(elapsed - m_last > 1000) {
             int random = rand()%100;
 
-            if(random < 25){
+            if(random < 25) {
                 set_direction(Guard::LEFT);
             }
-            else if(random < 50){
+            else if(random < 50) {
                 set_direction(Guard::UP);
             }
-            else if(random < 75){
+            else if(random < 75) {
                 set_direction(Guard::RIGHT);
             }
-            else{
+            else {
                 set_direction(Guard::DOWN);
             }
             m_last = elapsed;
         }
     }
-    else if (m_type == "normal"){
-        if(elapsed - m_last > 5000){
+    else if (m_type == "normal") {
+        if(elapsed - m_last > 5000) {
             int test = ((int)direction() + 2) % 4;
 
             Direction new_direction = (Direction)test;
@@ -159,42 +169,42 @@ void Guard::update_direction(unsigned long elapsed){
             m_last = elapsed;
         }
     }
-    else if(m_type == "hard" || m_type == "follow"){
-        if(elapsed - m_last > 5000){
+    else if(m_type == "hard" || m_type == "follow") {
+        if(elapsed - m_last > 5000) {
             int random = rand()%100;
 
-            if(random < 25){
+            if(random < 25) {
                 set_direction(Guard::LEFT);
             }
-            else if(random < 50){
+            else if(random < 50) {
                 set_direction(Guard::UP);
             }
-            else if(random < 75){
+            else if(random < 75) {
                 set_direction(Guard::RIGHT);
             }
-            else{
+            else {
                 set_direction(Guard::DOWN);
             }
             m_last = elapsed;
         }
     }
-
     m_animation->set_row(this->direction());
 }
 
-void Guard::get_playerx(int pos_x){
+void Guard::get_playerx(int pos_x) {
     player_posx = pos_x;
 }
 
-void Guard::get_playery(int pos_y){
+void Guard::get_playery(int pos_y) {
     player_posy = pos_y;
 }
 
-double Guard::damage(){
+double Guard::damage() {
     return m_damage;
 }
 
-void Guard::update_self(unsigned long elapsed){
+void Guard::update_self(unsigned long elapsed) {
+
     set_x(this->x());
     set_y(this->y());
 
@@ -205,34 +215,34 @@ void Guard::update_self(unsigned long elapsed){
     update_vision();
 }
 
-void Guard::change_animation(string path){
+void Guard::change_animation(string path) {
     m_animation.reset(new Animation(path, 0, 0, 70, 70, 8, 120, true));
 }
 
-double Guard::health(){
+double Guard::health() {
     return m_health;
 }
 
-string Guard::type(){
+string Guard::type() {
     return m_type;
 }
 
-string Guard::old_type(){
+string Guard::old_type() {
     return m_old_type;
 }
 
-void Guard::set_type(string t){
+void Guard::set_type(string t) {
     m_type = t;
 }
 
-void Guard::set_old_type(string t){
+void Guard::set_old_type(string t) {
     m_old_type = t;
 }
 
-void Guard::receive_dmg(double dmg){
+void Guard::receive_dmg(double dmg) {
     m_health = m_health - dmg;
 
-    if(m_health < 0){
+    if(m_health < 0) {
         m_health = 0;
     }
 }

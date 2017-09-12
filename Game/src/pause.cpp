@@ -1,3 +1,9 @@
+/*
+ * File: pause.cpp
+ *
+ * Description: Sets the buttons and actions of the game pause screen
+ */
+
 #include "pause.h"
 #include <ijengine/util/button.h>
 #include <core/font.h>

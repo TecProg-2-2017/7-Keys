@@ -1,5 +1,7 @@
 /*
- * Player class implementation.
+ * File: player.cpp
+ *
+ * Description: Defines the player's movements and actions
  */
 
 #include "player.h"
@@ -36,6 +38,7 @@ class Player::Impl {
        return m_direction;
      }
 
+// Set direction of player
     void set_direction(Direction direction) {
        m_direction = direction;
      }
@@ -44,6 +47,7 @@ class Player::Impl {
       return m_moviment;
      }
 
+// Set moviment of player
     void set_moviment(double xaxis, double yaxis) {
         m_moviment = make_pair(xaxis, yaxis);
     }
@@ -59,10 +63,12 @@ class Player::Impl {
         m_strength = strength;
     }
 
+// Sets player properties : strength
     double strength() {
         return m_strength;
     }
 
+// Sets player properties : health
     void set_health(double health) {
         m_health = health;
     }
@@ -71,6 +77,7 @@ class Player::Impl {
         return m_health;
     }
 
+// Sets player properties : sanity
     void set_sanity(double sanity) {
         m_sanity = sanity;
     }
@@ -79,10 +86,12 @@ class Player::Impl {
         return m_sanity;
     }
 
+
     double stamina() {
         return m_stamina;
     }
 
+// Sets player properties : stamina
     void set_stamina(double stamina) {
         m_stamina = stamina;
     }
@@ -120,6 +129,7 @@ class Player::Impl {
         m_player->add_child(pill);
     }
 
+// Selecting weapon type
     void get_weapon(string weapon_id) {
         if(m_hweapon == true) {
             return;
@@ -137,6 +147,7 @@ class Player::Impl {
         Item* lWeapon = new Item(m_player, "icon_weapon", weapon_path, x_axis,
                                  y_axis, 9999, true);
         m_player->add_child(lWeapon);
+
 
         if(weapon_id == "Garrafa") {
             Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path,
@@ -157,6 +168,7 @@ class Player::Impl {
         }
     }
 
+// Player captures a key
     void get_key() {
 
         if(m_key == true) {
@@ -182,6 +194,8 @@ class Player::Impl {
         return m_key;
     }
 
+// Show the player property health
+Player captures a key
     void show_health() {
 
         Environment *env = Environment::get_instance();
@@ -193,6 +207,7 @@ class Player::Impl {
         env->canvas->draw(borda, Color::RED);
     }
 
+// Show the player property sanity
     void show_sanity() {
         Environment *env = Environment::get_instance();
         Rect sanitybar {(double)env->canvas->w()/15,
@@ -203,6 +218,7 @@ class Player::Impl {
         env->canvas->draw(borda, Color::GREEN);
     }
 
+// Show the player property stamina
     void show_stamina() {
 
         Environment *env = Environment::get_instance();
@@ -242,6 +258,7 @@ class Player::Impl {
         env->canvas->fill(not_item, Color::WHITE);
     }
 
+// Allow the player to use a pill to regain health or sanity
     void use_pill() {
 
         if(m_pill == 1) {
@@ -282,6 +299,7 @@ class Player::Impl {
         }
     }
 
+//  Notify that player use a weapon
     void use_weapon() {
 
         if(m_weapon) {
@@ -297,6 +315,7 @@ class Player::Impl {
         m_player->notify(jumpNextLevelID, "next_level");
     }
 
+// Notify that player open a door
     void open_door() {
         m_player->notify(openDoorID, "open_door");
     }

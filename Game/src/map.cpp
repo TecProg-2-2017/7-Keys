@@ -1,3 +1,9 @@
+/*
+ * File: map.cpp
+ *
+ * Description: Create and generate the scenery map
+ */
+
 #include <list>
 #include <utility>
 #include <ijengine/core/environment.h>
@@ -8,6 +14,7 @@
 
 using namespace std;
 
+// Constructor method that generates a map.
 Map::Map(int qnt_salas, int stage_id) : current_room(nullptr), m_boss(NULL) {
 	GenerateMap(qnt_salas, stage_id);
 
@@ -15,6 +22,8 @@ Map::Map(int qnt_salas, int stage_id) : current_room(nullptr), m_boss(NULL) {
     m_boss = boss;
 }
 
+// TODO: refactorate for better understanding
+// Method that creates a Room's map
 void Map::CreateRoom(Room *room, int *id,int x, int y, int qnt, int stage_id) {
 	int randomVar;
     int randomType = rand() % 3;
@@ -60,13 +69,13 @@ void Map::CreateRoom(Room *room, int *id,int x, int y, int qnt, int stage_id) {
 		    if(room->r_left != nullptr) {
 			    CreateRoom(room->r_left, id, x-1, y, qnt, stage_id);
 			}
-			else if(x-1 >= 0 && matriz[x-1][y] == false && 
-                    (room->room_type()!= "Cela" || 
+			else if(x-1 >= 0 && matriz[x-1][y] == false &&
+                    (room->room_type()!= "Cela" ||
                     (room->room_type() == "Cela" && room->r_right))) {
                 if(type == "Cela") {
                     type += 'H';
 				}
-				room->Room::r_left = new Room(this, sala, type, nullptr, 
+				room->Room::r_left = new Room(this, sala, type, nullptr,
                         nullptr, room, nullptr, stage_id);
                 room_list.push_back(room->r_left);
                 room->r_left->pos_x = x-1;
@@ -84,7 +93,7 @@ void Map::CreateRoom(Room *room, int *id,int x, int y, int qnt, int stage_id) {
 			    CreateRoom(room->r_right, id, x+1, y, qnt, stage_id);
 			}
 		    else if(x+1 < qnt && matriz[x+1][y] == false &&
-                    (room->room_type() != "Cela" || 
+                    (room->room_type() != "Cela" ||
                     (room->room_type() == "Cela" && room->r_left))) {
                 if(type == "Cela") {
                     type += 'H';
@@ -150,6 +159,7 @@ void Map::CreateRoom(Room *room, int *id,int x, int y, int qnt, int stage_id) {
 	}
 }
 
+// Method that generates the scenery map
 void Map::GenerateMap(int quantidade_salas, int stage_id) {
 
     int x = quantidade_salas/2;
@@ -186,14 +196,17 @@ void Map::GenerateMap(int quantidade_salas, int stage_id) {
     free(matriz);
 }
 
+// Method that removes items from map
 void Map::remove_item(Object *item) {
     current_room->remove_item(item);
 }
 
+// Method that returns the current room
 Room* Map::room() {
 	return current_room;
 }
 
+// Method that sets the current room
 void Map::set_current(Room *nova) {
 
     if(current_room != NULL) {
@@ -214,10 +227,13 @@ void Map::set_current(Room *nova) {
     }
 }
 
+// Method that get current room's items
 const list<Object *>& Map::items() {
     return current_room->get_items();
 }
 
+// TODO: Refactore this method for better understanding
+// Method that load a message for stage
 bool Map::on_message(Object *, MessageID id, Parameters p) {
 
     if(id == Room::guardDeathID) {
@@ -235,6 +251,7 @@ bool Map::on_message(Object *, MessageID id, Parameters p) {
     return false;
 }
 
+// Method that updates the map
 void Map::update_self(unsigned long elapsed) {
 
     if(m_boss->created()) {

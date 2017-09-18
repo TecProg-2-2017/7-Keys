@@ -1,3 +1,9 @@
+/*
+ * File: quadtree.cpp
+ *
+ * Description:
+ */
+
 #include <iostream>
 #include "quadtree.h"
 

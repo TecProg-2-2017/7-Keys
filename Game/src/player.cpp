@@ -1,8 +1,9 @@
 /*
- * File: player.cpp 
+ * File: player.cpp
  *
- * Description: Player class implementation.
+ * Description: Defines the player's movements and actions
  */
+
 #include "player.h"
 #include "core/rect.h"
 #include "core/level.h"
@@ -24,7 +25,7 @@ class Player::Impl {
 
     public:
 
-        // Player constructor method     
+        // Player constructor method
         Impl(Player *player, bool key)
         : m_sanity_loss(0), m_player(player), m_direction(Player::LEFT),
         m_moviment(make_pair(0.0, 0.0)),
@@ -34,12 +35,20 @@ class Player::Impl {
 
     int m_sanity_loss;
 
-    Direction direction() const { return m_direction; }
+    Direction direction() const {
+       return m_direction;
+     }
 
-    void set_direction(Direction direction) { m_direction = direction; }
+// Set direction of player
+    void set_direction(Direction direction) {
+       m_direction = direction;
+     }
 
-    const pair<double, double>& moviment() const { return m_moviment; }
+    const pair<double, double>& moviment() const {
+      return m_moviment;
+     }
 
+// Set moviment of player
     void set_moviment(double xaxis, double yaxis) {
         m_moviment = make_pair(xaxis, yaxis);
     }
@@ -56,10 +65,12 @@ class Player::Impl {
         m_strength = strength;
     }
 
+// Sets player properties : strength
     double strength() {
         return m_strength;
     }
 
+// Sets player properties : health
     void set_health(double health) {
         m_health = health;
     }
@@ -68,6 +79,7 @@ class Player::Impl {
         return m_health;
     }
 
+// Sets player properties : sanity
     void set_sanity(double sanity) {
         m_sanity = sanity;
     }
@@ -76,10 +88,12 @@ class Player::Impl {
         return m_sanity;
     }
 
+
     double stamina() {
         return m_stamina;
     }
 
+// Sets player properties : stamina
     void set_stamina(double stamina) {
         m_stamina = stamina;
     }
@@ -122,7 +136,11 @@ class Player::Impl {
         m_player->add_child(pill);
     }
 
+<<<<<<< HEAD
+// Selecting weapon type
+=======
     // Player get a weapon
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void get_weapon(string weapon_id) {
 
         // If the player already have a weapon, exit the method
@@ -144,6 +162,7 @@ class Player::Impl {
                                  y_axis, 9999, true);
         m_player->add_child(lWeapon);
 
+
         if(weapon_id == "Garrafa") {
             Weapon* weapon = new Weapon(m_player, "icon_weapon", weapon_path,
             3, 34.0, 5);
@@ -163,7 +182,11 @@ class Player::Impl {
         }
     }
 
+<<<<<<< HEAD
+// Player captures a key
+=======
     // Player get a key
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void get_key() {
 
         if(m_key == true) {
@@ -190,7 +213,12 @@ class Player::Impl {
         return m_key;
     }
 
+<<<<<<< HEAD
+// Show the player property health
+Player captures a key
+=======
     // Show player healthbar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_health() {
         Environment *env = Environment::get_instance();
         Rect healthbar {(double)env->canvas->w()/15,
@@ -201,7 +229,11 @@ class Player::Impl {
         env->canvas->draw(borda, Color::RED);
     }
 
+<<<<<<< HEAD
+// Show the player property sanity
+=======
     // Show player sanity bar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_sanity() {
         Environment *env = Environment::get_instance();
         Rect sanitybar {(double)env->canvas->w()/15,
@@ -212,7 +244,11 @@ class Player::Impl {
         env->canvas->draw(borda, Color::GREEN);
     }
 
+<<<<<<< HEAD
+// Show the player property stamina
+=======
     // Show player stamina bar
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void show_stamina() {
 
         Environment *env = Environment::get_instance();
@@ -252,7 +288,11 @@ class Player::Impl {
         env->canvas->fill(not_item, Color::WHITE);
     }
 
-    // Player uses pill 
+<<<<<<< HEAD
+// Allow the player to use a pill to regain health or sanity
+=======
+    // Player uses pill
+>>>>>>> e89e43706e6e5e15ff21a24da7993bdda4750673
     void use_pill() {
 
         // Pill of health
@@ -275,7 +315,7 @@ class Player::Impl {
                 }
             }
         }// End of pill of health
-        
+
         // Pill of sanity
         else if(m_pill == 2) {
             double recover = 35;
@@ -296,6 +336,7 @@ class Player::Impl {
         }// End of pill of sanity
     }
 
+//  Notify that player use a weapon
     void use_weapon() {
 
         if(m_weapon) {
@@ -311,6 +352,7 @@ class Player::Impl {
         m_player->notify(jumpNextLevelID, "next_level");
     }
 
+// Notify that player open a door
     void open_door() {
         m_player->notify(openDoorID, "open_door");
     }
@@ -484,7 +526,7 @@ class Idle : public SpriteState {
 
             // End of case KeyboardEvent::PRESSED
 
-            // Start of case KeyboardEvent::RELEASED 
+            // Start of case KeyboardEvent::RELEASED
             case KeyboardEvent::RELEASED:
                 switch (event.key()) {
                     case KeyboardEvent::LEFT:
@@ -523,13 +565,13 @@ class Idle : public SpriteState {
                         break;
                 }
                 break;
-            // End of case KeyboardEvent::RELEASED 
-            
+            // End of case KeyboardEvent::RELEASED
+
         } // End of switch to determinate keyboard event behavior
         return false;
     }
 
-    // Draw player char, health bar, sanity bar, inventory and stamina bar 
+    // Draw player char, health bar, sanity bar, inventory and stamina bar
     void draw() {
         m_animation->draw(m_player->x(), m_player->y());
         m_player->show_health();
@@ -620,7 +662,7 @@ public:
 
     const double m_speed = 250.0;
 
-    // Running player enter the scenario 
+    // Running player enter the scenario
     void enter(int from) {
         m_player->set_dimensions(m_animation->w(), m_animation->h());
 
@@ -713,7 +755,7 @@ public:
                 }
                 break;
             // End of Case KeyboardEvent::PRESSED
-            
+
             // Start of Case KeyboardEvento::RELEASED
             case KeyboardEvent::RELEASED:
                 switch (event.key()) {
@@ -905,7 +947,7 @@ class Duck : public SpriteState {
         // Start of switch to determinate keyboard event behavior
         switch (event.state()) {
 
-            // Start of case KeyboardEvent::PRESSED 
+            // Start of case KeyboardEvent::PRESSED
             case KeyboardEvent::PRESSED:
                 switch (event.key()) {
                     case KeyboardEvent::LEFT:
@@ -952,8 +994,8 @@ class Duck : public SpriteState {
                         break;
                 }
                 break;
-            // End of case KeyboardEvent::PRESSED 
-             
+            // End of case KeyboardEvent::PRESSED
+
             // Start of case KeyboardEvent::RELEASED
             case KeyboardEvent::RELEASED:
                 switch (event.key()) {
@@ -991,7 +1033,7 @@ class Duck : public SpriteState {
                 break;
             // End of case KeyboardEvent::RELEASED
 
-        }// End of switch to determinate keyboard evento behavior  
+        }// End of switch to determinate keyboard evento behavior
         return false;
     }
 
